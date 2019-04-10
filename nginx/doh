@@ -1,0 +1,40 @@
+upstream dohproxy_backend {
+  server [::1]:8053;
+  server [::1]:8054;
+}
+
+server {
+  listen <PUBLIC_IPV4>:443 ssl http2;
+  listen <PUBLIC_IPV6>:443 ssl http2;
+  server_name dns.digitale-gesellschaft.ch dns1.digitale-gesellschaft.ch dns2.digitale-gesellschaft.ch;
+
+  ssl_certificate <PATH_TO_CERTIFICATE>/fullchain.pem;
+  ssl_certificate_key <PATH_TO_CERTIFICATE>/privkey.pem;
+  include /etc/nginx/tls.conf;
+
+  ssl_stapling on;
+  ssl_stapling_verify on;
+
+  ssl_trusted_certificate <PATH_TO_CERTIFICATE>/chain.pem;
+  resolver 127.0.0.1;
+
+  add_header Strict-Transport-Security max-age=15768000;
+
+  if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
+    return 501;
+  }
+  
+  location / {
+    deny all;
+    root /usr/share/nginx/html/nonexist;
+    autoindex off;
+  }
+  
+  location /dns-query {
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-For 127.0.0.1;
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_pass http://dohproxy_backend;
+  }
+}

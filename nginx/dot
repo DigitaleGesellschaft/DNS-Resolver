@@ -1,0 +1,14 @@
+stream {
+  upstream unbound_backend {
+    server 127.0.0.1:53;
+  }
+
+  server {
+    listen 853 ssl;
+    proxy_pass unbound_backend;
+    ssl_certificate <PATH_TO_CERTIFICATES>/fullchain.pem;
+    ssl_certificate_key <PATH_TO_CERTIFICATES>/privkey.pem;
+    include /etc/nginx/tls.conf;
+    proxy_ssl off;
+  }
+}
