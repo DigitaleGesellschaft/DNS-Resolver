@@ -10,7 +10,7 @@
   
   [Service]
   Type=simple
-  ExecStart=/usr/local/bin/doh-httpproxy --upstream-resolver 127.0.0.1 --listen-address=::1 --port 8053
+  ExecStart=/usr/local/bin/doh-httpproxy --upstream-resolver 127.0.0.1 --listen-address=::1 --port 8053 --level warn
   Restart=always
   User=doh-proxy
 
@@ -28,7 +28,7 @@
   
   [Service]
   Type=simple
-  ExecStart=/usr/local/bin/doh-httpproxy --upstream-resolver 127.0.0.1 --listen-address=::1 --port 8054
+  ExecStart=/usr/local/bin/doh-httpproxy --upstream-resolver 127.0.0.1 --listen-address=::1 --port 8054 --level warn
   Restart=always
   User=doh-proxy
 
