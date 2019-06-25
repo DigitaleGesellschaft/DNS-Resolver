@@ -18,7 +18,8 @@ server {
   ssl_trusted_certificate <PATH_TO_CERTIFICATE>/chain.pem;
   resolver 127.0.0.1;
 
-  add_header Strict-Transport-Security max-age=15768000;
+  add_header Strict-Transport-Security "max-age=31536000" always;
+
 
   if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
     return 501;
