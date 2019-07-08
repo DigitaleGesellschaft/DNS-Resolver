@@ -19,6 +19,7 @@ server {
   resolver 127.0.0.1;
 
   add_header Strict-Transport-Security "max-age=31536000" always;
+  add_header Access-Control-Allow-Origin "*";
 
 
   if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
