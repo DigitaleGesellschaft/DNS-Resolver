@@ -8,6 +8,9 @@ server {
   listen <PUBLIC_IPV6>:443 ssl http2;
   server_name dns.digitale-gesellschaft.ch dns1.digitale-gesellschaft.ch dns2.digitale-gesellschaft.ch;
 
+  access_log /var/log/nginx/access.log minimal;
+  error_log off;
+
   ssl_certificate <PATH_TO_CERTIFICATE>/fullchain.pem;
   ssl_certificate_key <PATH_TO_CERTIFICATE>/privkey.pem;
   include /etc/nginx/tls.conf;
