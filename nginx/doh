@@ -31,7 +31,7 @@ server {
     autoindex off;
   }
   
-  location /dns-query {
+  location = /dns-query {
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-For 127.0.0.1;
     proxy_redirect off;
