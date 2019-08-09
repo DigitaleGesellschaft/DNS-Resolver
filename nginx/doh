@@ -1,6 +1,9 @@
 upstream dohproxy_backend {
   server [::1]:8053;
   server [::1]:8054;
+  
+  # Lastenausgleich
+  least_conn;
 }
 
 server {
