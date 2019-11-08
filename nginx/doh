@@ -1,9 +1,8 @@
 upstream dohproxy_backend {
   server [::1]:8053;
-  server [::1]:8054;
   
-  # Lastenausgleich
   least_conn;
+  keepalive 32;
 }
 
 server {
@@ -25,8 +24,7 @@ server {
   resolver 127.0.0.1;
 
   add_header Strict-Transport-Security "max-age=31536000" always;
-  add_header Access-Control-Allow-Origin "*";
-
+  add_header Access-Control-Allow-Methods "GET, HEAD, POST";
 
   if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
     return 501;
@@ -39,7 +37,10 @@ server {
   }
   
   location = /dns-query {
+    proxy_hide_header Access-Control-Allow-Methods;
+    proxy_hide_header X-Powered-By;
     proxy_set_header Host $http_host;
+    proxy_set_header Connection "";
     proxy_set_header X-Forwarded-For 127.0.0.1;
     proxy_redirect off;
     proxy_buffering off;
