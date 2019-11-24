@@ -4,7 +4,8 @@ stream {
   }
 
   server {
-    listen 853 ssl;
+    listen <PUBLIC_IPV4>:853 ssl;
+    listen <PUBLIC_IPV6>:853 ssl;
     proxy_pass unbound_backend;
     ssl_certificate <PATH_TO_CERTIFICATES>/fullchain.pem;
     ssl_certificate_key <PATH_TO_CERTIFICATES>/privkey.pem;
