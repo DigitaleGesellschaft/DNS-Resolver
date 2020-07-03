@@ -1,20 +1,54 @@
 # DNS-Resolver
-Configuration files of our DoT and DoH servers
+Technical overview and configuration files of our public DoT and DoH DNS resolvers.
 
 
-Digitale Gesellschaft runs two publicly available DoH and DoT name resolver systems. Our live configuration is publicly available in this repository. Feel free to copy it and run your own DoH or DoT server.
+The Digital Society Switzerland runs two publicly available DoH and DoT DNS resolver systems. In this repository we provide various configuration [instructions](howtos/) so you can use our service. To use transparency and a diverse Internet is very important, therefore we provide our live [configuration](configuration-files/). Everyone is welcome to copy our configuration and run his/her own secure DNS resolver.
 
-Any suggestions or questions about this configuration? Feel free to contact us!
+Our DNS resolvers:
 
-More information can be found [here](https://www.digitale-gesellschaft.ch/dns/) (German only).
+- DoT: `dns.digitale-gesellschaft.ch:853`
+- DoH: `https://dns.digitale-gesellschaft.ch/dns-query`
+
+Do you have improvement suggestions and/or questions about our configuration? Check out our [FAQ](FAQ.md) or get in contact with us. More information can be found [here](https://www.digitale-gesellschaft.ch/dns/) (German only).
+
+The following illustration describes the idea of our secure DNS service.
+
+![Secure DNS resolver in a pig picture](img/Secure-DNS-Resolver-Big-Picture-100p.png)
 
 
-## Overview
+## Technical Information & Configuration How To’s
 
-Our two servers have an identical setup. Here is a deployment diagram as an overview.
+Technically every DNS-over-HTTPS or DNS-over-TLS conform software or system is able to be configured to our public services. Simply point them to our secure DNS resolvers:
 
-- Nginx is our reverse proxy which handles connections on port 853/tcp and port 443/tcp. All crypto and certificate configurations are done here.
-- [DNS-over-HTTPS](https://github.com/m13253/dns-over-https) is responsible for translating HTTP to DNS and vice versa.
-- Unbound is our DNS resolver, all name to IP translation work is done here.
+- DoT: `dns.digitale-gesellschaft.ch:853`
+- DoH: `https://dns.digitale-gesellschaft.ch/dns-query`
 
-![DNS Resolver Deployment Diagram](DNS-Resolver-Deployment-Diagram.png)
+In case you want IP addresses use these:
+
+- `2a05:fc84::42`
+- `2a05:fc84::43`
+- `185.95.218.42`
+- `185.95.218.43`
+
+These are virtual IP addresses (VRRP) and are shared by our server instances.
+
+The following list gives you some ideas how to configure your software or system to use our secure DNS resolvers. The list of how-tos is not complete. Feel free to add configuration instructions or translations in other languages via a pull request (PR).
+
+### Browser Configuration
+
+- Firefox with DoH: [German](configuration-files/firefox-DE.md)
+- Opera with DoH: [German](configuration-files/opera-DE.md)
+- Chrome / Chromium with DoH: [German](configuration-files/chrome-DE.md)
+
+
+### Operating System
+
+- Android / Lineage OS with DoT: [German](configuration-files/android-DE.md)
+- iOS via DNSCloak with DoH: [German](configuration-files/ios-dnscloak-DE.md)
+
+
+### Other
+
+- Curl with DoH: [German](configuration-files/curl-DE.md)
+- Stubby with DoT: [German](configuration-files/stubby-DE.md)
+- Turris Omnia / OpenWRT with DoT: [German](configuration-files/turris-omnia-DE.md)
