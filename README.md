@@ -36,19 +36,19 @@ The following list gives you some ideas how to configure your software or system
 
 ### Browser Configuration
 
-- Firefox with DoH: [German](configuration-files/firefox-DE.md)
-- Opera with DoH: [German](configuration-files/opera-DE.md)
-- Chrome / Chromium with DoH: [German](configuration-files/chrome-DE.md)
+- Firefox with DoH: [German](howtos/browser/firefox-DE.md)
+- Opera with DoH: [German](howtos/browser/opera-DE.md)
+- Chrome / Chromium with DoH: [German](howtos/browser/chrome-DE.md)
 
 
 ### Operating System
 
-- Android / Lineage OS with DoT: [German](configuration-files/android-DE.md)
-- iOS via DNSCloak with DoH: [German](configuration-files/ios-dnscloak-DE.md)
+- Android / Lineage OS with DoT: [German](howtos/os/android-DE.md)
+- iOS via DNSCloak with DoH: [German](howtos/os/ios-dnscloak-DE.md)
 
 
 ### Other
 
-- Curl with DoH: [German](configuration-files/curl-DE.md)
-- Stubby with DoT: [German](configuration-files/stubby-DE.md)
-- Turris Omnia / OpenWRT with DoT: [German](configuration-files/turris-omnia-DE.md)
+- Curl with DoH: [German](howtos/other/curl-DE.md)
+- Stubby with DoT: [German](howtos/other/stubby-DE.md)
+- Turris Omnia / OpenWRT with DoT: [German](howtos/other/turris-omnia-DE.md)
