@@ -49,3 +49,13 @@ server {
     proxy_pass http://dohproxy_backend;
   }
 }
+
+server {
+  listen 185.95.218.42:80;
+  listen [2a05:fc84::42]:80;
+  listen 185.95.218.43:80;
+  listen [2a05:fc84::43]:80;
+  server_name dns.digitale-gesellschaft.ch dns1.digitale-gesellschaft.ch dns2.digitale-gesellschaft.ch;
+
+  return 301 https://$host$request_uri;
+}
