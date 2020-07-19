@@ -19,6 +19,8 @@ Our two servers have an identical setup. Here is a deployment diagram as an over
 
 ## Configuration
 
+- [index.html](index.html) `/var/www/doh/index.html` Our servers welcome and information page. This site is accessable under [https://dns.digitale-gesellschaft.ch/](https://dns.digitale-gesellschaft.ch/).
+
 
 ### Nginx
 
