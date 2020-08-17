@@ -36,6 +36,12 @@ server {
     root /var/www/doh/;
     autoindex off;
   }
+  
+  location /test {
+    default_type text/plain;
+    add_header Cache-Control 'no-cache, no-store, must-revalidate';
+    return 200 'This is res[1|2]\n';
+  }
 
   location = /dns-query {
     proxy_hide_header Access-Control-Allow-Methods;
