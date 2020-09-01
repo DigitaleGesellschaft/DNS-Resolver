@@ -14,6 +14,10 @@ In Konfigurationsdatei /etc/stubby/stubby.yml hinzufügen um DoT im Strict-Mode 
     dns_transport_list:
       - GETDNS_TRANSPORT_TLS
     
+    listen_addresses:
+      - 127.0.0.1
+      -  0::1
+    
     tls_authentication: GETDNS_AUTHENTICATION_REQUIRED
     
     round_robin_upstreams: 1
