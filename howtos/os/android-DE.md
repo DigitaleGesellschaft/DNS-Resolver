@@ -1,4 +1,4 @@
-# Android mit DoH
+# Android mit DoT
 
 Google bietet DoT ab Version 9 (Pie) über die Netzwerkeinstellungen an. Lineage OS bietet DoT ab Version 16 an.
 
