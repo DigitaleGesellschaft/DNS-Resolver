@@ -1,28 +1,31 @@
 # Turis Omnia / OpenWRT mit DoT
 
+> :warning: **Für Experten** :warning:
+>
+>Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach installiert werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
 
-## Experten
+Der DNS-Resolver des Turris Omnia Router, kresd, kann per SSH auch für DoT konfiguriert werden. Die folgende Anleitung für DoT via die DNS-Server der Digitalen Gesellschaft sollte auch allgemein für OpenWRT basierte Geräte funktionieren.
 
-Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach installiert werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
+1. Konfigurationsdatei erstellen.
 
-Der Turris Omnia Router kann per SSH ebenfalls auf DoT konfiguriert werden. Die Anleitung sollte auch allgemein für OpenWRT basierte Geräte funktionieren.
-
-0. Der Turris Omnia Router kann per SSH ebenfalls auf DoT konfiguriert werden. Die Anleitung sollte auch allgemein für OpenWRT basierte Geräte funktionieren.
+   Eine neuen Datei unter `/etc/resolver/dns_servers/99_digiges.conf` mit folgendem Inhalt erstellen:
    ```
    name="99_digiges.conf"
    description="Digitale Gesellschaft (TLS)"
    enable_tls="1"
    port="853"
-   ipv4="185.95.218.42"
-   ipv6="2a05:fc84::42"
+   ipv4="185.95.218.42 "
+   ipv6="2a05:fc84::42 2a05:fc84::43"
    hostname="dns.digitale-gesellschaft.ch"
    ```
-0. Lokalen Resolver umstellen. In der Datei /etc/config/resolver in der Sektion config resolver ‘common‘ folgende Zeilen ändern/hinzufügen: 
+2. Lokalen Resolver umstellen.
+
+   In der Datei `/etc/config/resolver` in der Sektion `config resolver 'common'` folgende Zeilen ändern/hinzufügen: 
    ```
-   option forward_upstream ‚1'
-   option forward_custom ’99_digiges'
+   option forward_upstream '1'
+   option forward_custom '99_digiges'
    ```
-0. Lokalen Resolver neustarten
+3. Lokalen Resolver neustarten
    ```
    /etc/init.d/resolver restart
    ```
