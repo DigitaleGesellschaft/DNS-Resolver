@@ -14,7 +14,7 @@ Der DNS-Resolver des Turris Omnia Router, kresd, kann per SSH auch für DoT konf
    description="Digitale Gesellschaft (TLS)"
    enable_tls="1"
    port="853"
-   ipv4="185.95.218.42 "
+   ipv4="185.95.218.42 185.95.218.43"
    ipv6="2a05:fc84::42 2a05:fc84::43"
    hostname="dns.digitale-gesellschaft.ch"
    ```
