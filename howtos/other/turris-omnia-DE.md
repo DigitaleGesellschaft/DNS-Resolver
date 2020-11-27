@@ -16,6 +16,7 @@ Der DNS-Resolver des Turris Omnia Router, kresd, kann per SSH auch für DoT konf
    port="853"
    ipv4="185.95.218.42 185.95.218.43"
    ipv6="2a05:fc84::42 2a05:fc84::43"
+   ca_file="/etc/ssl/certs/ca-certificates.crt"
    hostname="dns.digitale-gesellschaft.ch"
    ```
 2. Lokalen Resolver umstellen.
