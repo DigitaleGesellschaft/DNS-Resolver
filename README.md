@@ -44,7 +44,7 @@ The following list gives you some ideas how to configure your software or system
 ### Operating System
 
 - Android / Lineage OS with DoT: [German](howtos/os/android-DE.md)
-- iOS via DNSCloak with DoH: [German](howtos/os/ios-dnscloak-DE.md)
+- iOS Profile: [German](howtos/os/ios-DE.md)
 
 
 ### Other
