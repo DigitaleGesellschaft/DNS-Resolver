@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>DNSSettings</key>
+			<dict>
+				<key>DNSProtocol</key>
+				<string>HTTPS</string>
+				<key>ServerAddresses</key>
+				<array>
+					<string>2a05:fc84::42</string>
+					<string>2a05:fc84::43</string>
+					<string>185.95.218.42</string>
+					<string>185.95.218.43</string>
+				</array>
+				<key>ServerURL</key>
+				<string>https://dns.digitale-gesellschaft.ch/dns-query</string>
+			</dict>
+			<key>PayloadDescription</key>
+			<string>Configures device to use Digitale Gesellschaft DNS over HTTPS (DoH)</string>
+			<key>PayloadDisplayName</key>
+			<string>Digitale Gesellschaft DNS over HTTPS (DoH)</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.dnsSettings.managed.f76ff80d-673f-4614-8b41-c841873b618e</string>
+			<key>PayloadType</key>
+			<string>com.apple.dnsSettings.managed</string>
+			<key>PayloadUUID</key>
+			<string>f76ff80d-673f-4614-8b41-c841873b618e</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Adds the Digitale Gesellschaft DNS server as default for encrypted DNS queries via HTTPS (DoH)</string>
+	<key>PayloadDisplayName</key>
+	<string>Digitale Gesellschaft DoH</string>
+	<key>PayloadIdentifier</key>
+	<string>ch.digitale-gesellschaft.dns</string>
+	<key>PayloadOrganization</key>
+	<string>Digitale Gesellschaft</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>340ede4a-c5da-4cb8-8085-4333128d5b17</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
