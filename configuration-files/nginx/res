@@ -1,24 +1,46 @@
 server {
-  listen <PUBLIC_IPV4>:443 ssl http2;
-  listen <PUBLIC_IPV6>:443 ssl http2;
+  listen 185.95.216.116:443 ssl http2;
+  listen [2a05:fc84:0:5::116]:443 ssl http2;
   server_name res1.digitale-gesellschaft.ch;
 
-  ssl_certificate <PATH_TO_CERTIFICATES>/fullchain.pem;
-  ssl_certificate_key <PATH_TO_CERTIFICATES>/privkey.pem;
-  include /etc/nginx/tls.conf;
+  ssl_certificate /etc/letsencrypt/live/res1.digitale-gesellschaft.ch/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/res1.digitale-gesellschaft.ch/privkey.pem;
 
-  # OCSP Stapling ---
-  # fetch OCSP records from URL in ssl_certificate and cache them
-  ssl_stapling on;
-  ssl_stapling_verify on;
-	
-  # verify chain of trust of OCSP response using Root CA and Intermediate certs
+  # ssl_stapling is globaly configured in tls.conf
   ssl_trusted_certificate /etc/letsencrypt/live/res1.digitale-gesellschaft.ch/chain.pem;
-  resolver 127.0.0.1;
 
   add_header Strict-Transport-Security max-age=15768000;
 	
   if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
     return 501;
   }
+
+  location /munin {
+    auth_basic "Speak friend and enter";
+    auth_basic_user_file /var/cache/munin/www/.htpasswd;
+    alias /var/cache/munin/www;
+  }
+
+  location / {
+    deny all;
+    root /usr/share/nginx/html/nonexist;
+    autoindex off;
+  }
 }
+
+server {
+  listen 185.95.216.116:80;
+  listen [2a05:fc84:0:5::116]:80;
+  server_name res1.digitale-gesellschaft.ch;
+
+  location /.well-known/acme-challenge/ {
+    alias /var/run/acme/acme-challenge/.well-known/acme-challenge/;
+    default_type text/plain;
+  }
+  
+  location / {
+    return 301 https://$server_name$request_uri;
+  }
+}
+
+

@@ -1,9 +1,12 @@
 upstream dohproxy_backend {
-  server [::1]:8053;
-
-  least_conn;
-  keepalive 32;
+  zone dohloop 64k;
+  server localhost:8053;
+  keepalive_timeout 60s;
+  keepalive_requests 100;
+  keepalive 10;
 }
+
+proxy_cache_path /var/cache/nginx/doh_cache levels=1:2 keys_zone=doh_cache:10m;
 
 server {
   listen 185.95.218.42:443 ssl http2;
@@ -12,15 +15,14 @@ server {
   listen [2a05:fc84::43]:443 ssl http2;
   server_name dns.digitale-gesellschaft.ch dns1.digitale-gesellschaft.ch dns2.digitale-gesellschaft.ch;
 
-  access_log /var/log/nginx/access.log minimal;
-  error_log off;
+  access_log /var/log/nginx/access-doh.log dns;
+  error_log /var/log/nginx/error-doh.log;
 
   ssl_certificate /etc/letsencrypt/live/dns.digitale-gesellschaft.ch/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/dns.digitale-gesellschaft.ch/privkey.pem;
-  include /etc/nginx/tls.conf;
 
-  ssl_stapling on;
-  ssl_stapling_verify on;
+  # ssl_stapling is globaly configured in tls.conf
+  ssl_trusted_certificate /etc/letsencrypt/live/dns.digitale-gesellschaft.ch/chain.pem;
 
   ssl_trusted_certificate /etc/letsencrypt/live/dns.digitale-gesellschaft.ch/chain.pem;
   resolver 127.0.0.1;
@@ -32,15 +34,17 @@ server {
     return 501;
   }
 
+  proxy_cache_methods GET POST;
+
   location / {
     root /var/www/doh/;
     autoindex off;
   }
-  
+
   location /test {
     default_type text/plain;
     add_header Cache-Control 'no-cache, no-store, must-revalidate';
-    return 200 'This is res[1|2]\n';
+    return 200 'Hello from dns1.digitale-gesellschaft.ch\n';
   }
 
   location = /dns-query {
@@ -48,20 +52,12 @@ server {
     proxy_hide_header X-Powered-By;
     proxy_set_header Host $http_host;
     proxy_set_header Connection "";
-    proxy_set_header X-Forwarded-For 127.0.0.1;
+    proxy_cache doh_cache;
+    proxy_cache_key $scheme$proxy_host$uri$is_args$args$request_body;
+    # EDNS0 we hide our users behind our IP address
+    proxy_set_header X-Forwarded-For 185.95.218.42;
     proxy_http_version 1.1;
-    proxy_redirect off;
-    proxy_buffering off;
     proxy_pass http://dohproxy_backend;
   }
 }
 
-server {
-  listen 185.95.218.42:80;
-  listen [2a05:fc84::42]:80;
-  listen 185.95.218.43:80;
-  listen [2a05:fc84::43]:80;
-  server_name dns.digitale-gesellschaft.ch dns1.digitale-gesellschaft.ch dns2.digitale-gesellschaft.ch;
-
-  return 301 https://$host$request_uri;
-}
