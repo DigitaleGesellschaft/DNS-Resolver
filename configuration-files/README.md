@@ -1,6 +1,6 @@
 # Server Configuration
 
-- OS: Ubuntu 18.04 LTS
+- OS: Ubuntu 20.04 LTS
 - Reverse Proxy: Nginx
 - DNS Resolver: Unbound
 - DoH Proxy: [DNS-over-HTTPS](https://github.com/m13253/dns-over-https)
