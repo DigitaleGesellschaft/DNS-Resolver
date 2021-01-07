@@ -1,6 +1,6 @@
 upstream dohproxy_backend {
   zone dohloop 64k;
-  server localhost:8053;
+  server 127.0.0.1:8053;
   keepalive_timeout 60s;
   keepalive_requests 100;
   keepalive 10;
