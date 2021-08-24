@@ -2,8 +2,8 @@
 
 Seit iOS 14 oder macOS 11 unterstützen Apple-Geräte das Setzen der System-weiten DNS Server via Profile. Dabei sind unserer Profile so definiert, dass sie sämtliche DNS Anfrage unabhängig vom Netzwerk (WiFi oder mobiles Netz) und verschlüsselt an unsere DNS Server leiten.
 
-- [DNS over TLS (DoT)](conf/digiges-dns-tls.mobileconfig)
-- [DNS over HTTPS (DoH)](conf/digiges-dns-https.mobileconfig)
+- [iOS Profil DNS over TLS (DoT)](https://raw.githubusercontent.com/DigitaleGesellschaft/DNS-Resolver/master/howtos/os/conf/digiges-dns-tls.mobileconfig)
+- [iOS Profil DNS over HTTPS (DoH)](https://raw.githubusercontent.com/DigitaleGesellschaft/DNS-Resolver/master/howtos/os/conf/digiges-dns-https.mobileconfig)
 
 :warning: Installiere nur eines der beiden Profile gleichzeitig.
 
