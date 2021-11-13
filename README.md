@@ -47,8 +47,13 @@ The following list gives you some ideas how to configure your software or system
 - iOS Profile: [German](howtos/os/ios-DE.md)
 
 
+### Internet Router
+
+- Fritz!Box with DoT: [German](howtos/router/fritz-box-DE.md)
+- Turris Omnia / OpenWRT with DoT: [German](howtos/router/turris-omnia-DE.md)
+
+
 ### Other
 
 - Curl with DoH: [German](howtos/other/curl-DE.md)
 - Stubby with DoT: [German](howtos/other/stubby-DE.md)
-- Turris Omnia / OpenWRT with DoT: [German](howtos/other/turris-omnia-DE.md)
