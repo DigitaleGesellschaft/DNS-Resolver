@@ -45,6 +45,7 @@ The following list gives you some ideas how to configure your software or system
 
 - Android / Lineage OS with DoT: [German](howtos/os/android-DE.md)
 - iOS Profile: [German](howtos/os/ios-DE.md)
+- Windows 11 with DoH: [German](howtos/os/win11-DE.md)
 
 
 ### Internet Router
