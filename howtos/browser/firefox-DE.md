@@ -20,12 +20,11 @@ Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss
 
 Firefox kann DoH im Strict Mode verwenden. Dazu sind Anpassungen in about:config nötig:
 
-- network.trr.bootstrapAddress = 185.95.218.42
 - network.trr.custom_uri = https://dns.digitale-gesellschaft.ch/dns-query
 - network.trr.mode = 3
 
 Die verschiedenen Modi von network.trr.mode:
 
-- 3: Verwende nur DoH (eine Bootstrap IP muss angegeben werden (185.95.218.42, 185.95.218.43, 2a05:fc84::42 oder 2a05:fc84::43) ‒ es kann nur eine IP hinterlegt werden)
-- 2 (default Einstellung): DoH wird präferiert aber reguläres DNS ist auch möglich (fallback)
-- 1: FF wählt zwischen DoH und DNS (das schnellere)
+- Wert 3: Verwende nur DoH (DoH-only Mode)
+- Wert 2: DoH wird präferiert aber reguläres DNS ist auch möglich (Doh-first Mode / default Einstellung)
+- Wert 1: FF wählt zwischen DoH und DNS (das schnellere)
