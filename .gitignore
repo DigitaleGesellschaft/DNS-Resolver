@@ -1,0 +1,10 @@
+# encrypted files
+vault.yml
+
+# potential sensitve user configuration
+**/users/*
+
+# swap files
+*.swp
+
+.idea
