@@ -1,0 +1,53 @@
+# internal only HTTPS server
+server {
+  listen {{ ip4 }}:443 ssl http2;
+  listen [{{ ip6 }}]:443 ssl http2;
+  server_name {{ name_intern }}.{{ domain }};
+
+  ssl_certificate {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem;
+  ssl_certificate_key {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem;
+
+  # ssl_stapling is globaly configured in tls.conf
+  ssl_trusted_certificate {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/chain.pem;
+
+  add_header Strict-Transport-Security max-age=15768000;
+	
+  # restrict HTTP verbs to only GET, POST and HEAD
+  if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
+    return 501;
+  }
+
+  # munin host monitoring
+  location /munin {
+    auth_basic "Speak friend and enter";
+    auth_basic_user_file /var/cache/munin/www/.htpasswd;
+    alias /var/cache/munin/www;
+  }
+
+  # metrics enpoint host monitoring
+  location /metrics {
+    auth_basic "Speak friend and enter";
+    auth_basic_user_file /var/cache/munin/www/.htpasswd;
+    proxy_pass http://{{ ip_localhost }}:9100/metrics;
+  }
+
+  # dnsdist monitoring endpoint
+  location /dnsdist {
+    rewrite ^/dnsdist$ / break;
+    rewrite ^/dnsdist/(.*)$ /$1 break;
+    rewrite_log on;
+    sub_filter_once off;
+    sub_filter_types test/html application/javascript;
+    sub_filter ' href="' ' href="dnsdist/';
+    sub_filter ' src="' ' src="dnsdist/';
+    sub_filter ' action="' ' action="dnsdist/';
+    sub_filter 'api/v1/servers/localhost' 'dnsdist/api/v1/servers/localhost';
+    sub_filter 'jsonstat?' 'dnsdist/jsonstat?';
+    proxy_pass http://{{ ip_localhost }}:8083;
+  }
+
+  location / {
+    root /var/www/res/;
+    autoindex off;
+  }
+}

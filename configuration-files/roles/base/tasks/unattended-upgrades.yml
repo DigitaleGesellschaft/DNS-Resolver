@@ -1,0 +1,11 @@
+---
+- name: unattended-upgrades | install
+  package:
+    state: latest
+    name: unattended-upgrades
+
+- name: unattended-upgrades | ensure service is enabled and running
+  service:
+    name: unattended-upgrades
+    state: started
+    enabled: yes

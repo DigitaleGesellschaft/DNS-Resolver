@@ -1,0 +1,28 @@
+---
+- name: Setup OS
+  tags: base
+  block:
+    - name: Setup Network
+      import_tasks: network.yml
+      tags: network,init
+
+    - name: Setup Users
+      tags: init
+      include_tasks: "{{ item }}"
+      with_fileglob:
+        - users/*.yml
+
+    - name: Setup Software
+      tags: init
+      block:
+        - import_tasks: unattended-upgrades.yml
+        - import_tasks: software/packages_cleanup.yml
+        - import_tasks: software/packages_utilities.yml
+
+    - name: Setup Firewall
+      import_tasks: firewall.yml
+      tags: firewall
+
+    - name: Setup SSH
+      tags: ssh,init
+      import_tasks: sshd.yml

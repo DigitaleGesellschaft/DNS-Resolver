@@ -1,0 +1,11 @@
+---
+nof_cpu: 24
+
+unbound_nof_thread: "{{ nof_cpu }}"
+unbound_nof_slabs: 32
+unbound_rrset_cache_size: "32000m"
+unbound_msg_cache_size: "16000m"
+unbound_outgoing_range: 100
+unbound_num_queries_per_thread: 4096
+unbound_so_rcvbuf: "8m"
+unbound_so_sndbuf: "8m"

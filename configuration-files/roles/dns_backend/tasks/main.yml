@@ -1,0 +1,6 @@
+---
+- name: Setup DNS Backend
+  tags: backend
+  block:
+    - import_tasks: unbound.yml
+    - import_tasks: systemd-resolved.yml

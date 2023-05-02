@@ -1,0 +1,72 @@
+---
+- name: nginx | install
+  package:
+    state: latest
+    name: nginx
+
+- name: nginx | ensure nginx is started
+  service:
+    name: nginx
+    state: started
+
+- name: nginx | webserver configurations | remove default web server configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: nginx | webserver configurations | create res www folder
+  file:
+    path: /var/www/res
+    state: directory
+    mode: "0755"
+
+- name: nginx | webserver configurations | copy index.html
+  copy:
+    src: index.html
+    dest: /var/www/res/index.html
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: nginx | webserver configurations | generate config files from template
+  template:
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/sites-available/{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - { src: "acme.conf.j2", dest: "acme.conf" }
+    - { src: "res-https.conf.j2", dest: "res-https.conf" }
+    - { src: "res.conf.j2", dest: "res.conf" }
+  notify:
+    - restart nginx
+
+- name: nginx | webserver configurations | activate http config files
+  file:
+    src: "/etc/nginx/sites-available/{{ item.file }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.file }}"
+    owner: root
+    group: root
+    state: link
+  loop:
+    - { file: "acme.conf" }
+    - { file: "res.conf" }
+  notify:
+    - restart nginx
+
+- name: nginx | check if intern certificate available
+  stat:
+    path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa"
+  register: intern_certificate
+
+- name: nginx | webserver configurations | activate https config files
+  file:
+    src: "/etc/nginx/sites-available/res-https.conf"
+    dest: "/etc/nginx/sites-enabled/res-https.conf"
+    owner: root
+    group: root
+    state: link
+  when: intern_certificate.stat.exists
+  notify:
+    - restart nginx

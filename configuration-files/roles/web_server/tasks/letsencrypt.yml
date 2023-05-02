@@ -1,0 +1,110 @@
+---
+- name: lets encrypt | install
+  community.general.snap:
+    name: certbot
+    classic: true
+
+- name: lets encrypt | symlink certbot
+  file:
+    src: "/snap/bin/certbot"
+    dest: "/usr/bin/certbot"
+    owner: root
+    group: root
+    state: link
+
+- name: Create cert directory
+  file:
+    path: "{{ cert_path }}live/"
+    state: directory
+    mode: "0755"
+
+- name: lets encrypt | create config dir
+  file:
+    path: "{{ cert_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: lets encrypt | create config accounts sub dir
+  file:
+    path: "{{ cert_path }}accounts"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: lets encrypt | create config sub dir
+  file:
+    path: "{{ cert_path }}{{ item.file }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - { file: "archive" }
+    - { file: "live" }
+    - { file: "renewal" }
+    - { file: "renewal-hooks" }
+
+- name: lets encrypt | copy cli config
+  copy:
+    src: cli.ini
+    dest: "{{ cert_path }}cli.ini"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: lets encrypt | create tmp dir
+  file:
+    path: /var/run/acme/acme-challenge
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: lets encrypt | copy deploy hook
+  copy:
+    src: letsencrypt-deploy-hook
+    dest: /usr/local/sbin/letsencrypt-deploy-hook
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: lets encrypt | generate renewal script from template
+  template:
+    src: letsencrypt-renew.j2
+    dest: /usr/local/sbin/letsencrypt-renew
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: lets encrypt | create renewal crob job
+  cron:
+    name: "renew certs periodically"
+    user: root
+    weekday: "3"
+    minute: "0"
+    hour: "0"
+    job: "/usr/local/sbin/letsencrypt-renew"
+  when: inventory_hostname == "dns1"
+
+- name: lets encrypt | create renewal crob job
+  cron:
+    name: "renew certs periodically"
+    user: root
+    weekday: "4"
+    minute: "0"
+    hour: "0"
+    job: "/usr/local/sbin/letsencrypt-renew"
+  when: inventory_hostname == "dns2"
+
+- name: lets encrypt | check if service certificate available
+  stat:
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa"
+  register: service_certificate
+
+- name: Create Let's Encrypt Certificates, if not existing
+  block:
+    - include_tasks: letsencrypt_create.yml
+  when: not service_certificate.stat.exists

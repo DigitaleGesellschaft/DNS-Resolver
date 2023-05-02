@@ -1,0 +1,109 @@
+# ----------------------------------------------------------------------------------------------------------------------
+#
+# CAUTION: This file was generated automatically with Ansible. Manual changes will be overwritten.
+#
+# unbound is the DNS backend and accepts queries only from dnsdist.
+#
+# ----------------------------------------------------------------------------------------------------------------------
+
+server:
+  
+  directory: "/etc/unbound"
+  pidfile: "/etc/unbound/unbound.pid"
+  username: unbound
+
+  # listen on all IP addresses assigned to this network interface
+  interface: {{ ip_localhost }}
+
+  access-control: 127.0.0.0/8 allow
+
+  # only log errors
+  verbosity: 0
+
+  # munin statistics
+  statistics-interval: 0
+  statistics-cumulative: no
+  extended-statistics: yes
+
+  # IP v6 is supported, so we prefer it over v4
+  prefer-ip6: yes
+
+  # unbound runs as systemd service, no fork to daemon needed here
+  do-daemonize: no
+
+  # Prefetch cached data to lower latency
+  prefetch: yes
+  prefetch-key: yes
+
+  # refuse to respond to id.server and hostname.bind queries
+  hide-identity: yes
+
+  # refuse to respond to version.server and version.bind queries
+  hide-version: yes
+
+  incoming-num-tcp: 1024
+  outgoing-num-tcp: 1024
+
+  auto-trust-anchor-file: "/var/lib/unbound/root.key"
+
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # Security and privacy settings
+  #
+  # Features which are enabled by default
+  #   * QName minimisation
+  #   * harden glue record
+  #   * harden-dnssec-stripped
+  # --------------------------------------------------------------------------------------------------------------------
+
+  # make cache poisoning attacks more difficult for an attacker
+  use-caps-for-id: yes
+
+  # very large queries are ignored
+  harden-large-queries: yes
+
+
+  # --------------------------------------------------------------------------------------------------------------------
+  # Optimisations
+  # as of https://nlnetlabs.nl/documentation/unbound/howto-optimise/
+  # --------------------------------------------------------------------------------------------------------------------
+  num-threads:            {{ unbound_nof_thread }}
+  so-reuseport:           yes
+  msg-cache-slabs:        {{ unbound_nof_slabs }}
+  rrset-cache-slabs:      {{ unbound_nof_slabs }}
+  infra-cache-slabs:      {{ unbound_nof_slabs }}
+  key-cache-slabs:        {{ unbound_nof_slabs }}
+  rrset-cache-size:       {{ unbound_rrset_cache_size }}
+  msg-cache-size:         {{ unbound_msg_cache_size }}
+  outgoing-range:         {{ unbound_outgoing_range }}
+  num-queries-per-thread: {{ unbound_num_queries_per_thread }}
+  so-rcvbuf:              {{ unbound_so_rcvbuf }}
+  so-sndbuf:              {{ unbound_so_sndbuf }}
+
+# Keep a locale copy of the root zone to boost lookup performance
+auth-zone:
+  name: "."
+  master: 199.9.14.201         # b.root-servers.net
+  master: 192.33.4.12          # c.root-servers.net
+  master: 199.7.91.13          # d.root-servers.net
+  master: 192.5.5.241          # f.root-servers.net
+  master: 192.112.36.4         # g.root-servers.net
+  master: 193.0.14.129         # k.root-servers.net
+  master: 192.0.47.132         # xfr.cjr.dns.icann.org
+  master: 192.0.32.132         # xfr.lax.dns.icann.org
+  master: 2001:500:200::b      # b.root-servers.net
+  master: 2001:500:2::c        # c.root-servers.net
+  master: 2001:500:2d::d       # d.root-servers.net
+  master: 2001:500:2f::f       # f.root-servers.net
+  master: 2001:500:12::d0d     # g.root-servers.net
+  master: 2001:7fd::1          # k.root-servers.net
+  master: 2620:0:2830:202::132 # xfr.cjr.dns.icann.org
+  master: 2620:0:2d0:202::132  # xfr.lax.dns.icann.org
+  fallback-enabled: yes
+  for-downstream: no
+  for-upstream: yes
+
+# Allow Munin statistics
+python:
+remote-control:
+  control-enable: yes

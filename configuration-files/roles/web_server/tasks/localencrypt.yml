@@ -1,0 +1,115 @@
+---
+- name: Create cert directory
+  file:
+    path: "{{ cert_path }}live/{{ item.name }}/"
+    state: directory
+    mode: "0755"
+  loop:
+    - { name: "{{ name_intern }}.{{ domain }}.ecdsa" }
+    - { name: "{{ host_public}}.{{ domain }}.ecdsa" }
+    - { name: "{{ host_public}}.{{ domain }}.rsa" }
+
+- name: Create private DSA key (without passphrase)
+  community.crypto.openssl_privatekey:
+    path: "{{ cert_path }}live/{{ item.name }}/privkey.pem"
+    type: "{{ item.type }}"
+  loop:
+    - { type: "DSA", name: "{{ name_intern }}.{{ domain }}.ecdsa" }
+    - { type: "DSA", name: "{{ host_public}}.{{ domain }}.ecdsa" }
+    - { type: "RSA", name: "{{ host_public}}.{{ domain }}.rsa" }
+
+- name: Check if RSA public PEM certificate file exists
+  stat:
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
+  register: pub_rsa_check
+
+- name: Check if DSA public PEM certificate file exists
+  stat:
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
+  register: pub_ecdsa_check
+
+- name: Check if DSA intern PEM certificate file exists
+  stat:
+    path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem"
+  register: int_ecdsa_check
+
+- name: Create public ECDSA certificate signing request (CSR)
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/privkey.pem"
+    common_name: "{{ host_public}}.{{ domain }}.ecdsa"
+    organization_name: "Digitale Gesellschaft"
+    subject_alt_name:
+      - "DNS:{{ host_public }}.{{ domain }}"
+      - "DNS:{{ name_public }}.{{ domain }}"
+      - "DNS:{{ name_other_public }}.{{ domain }}"
+  register: csr
+  when: not pub_rsa_check.stat.exists
+
+- name: Create public self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/fullchain.pem"
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/privkey.pem"
+    provider: selfsigned
+  when: not pub_rsa_check.stat.exists
+
+- name: Create public RSA certificate signing request (CSR)
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/privkey.pem"
+    common_name: "{{ host_public}}.{{ domain }}.rsa"
+    organization_name: "Digitale Gesellschaft"
+    subject_alt_name:
+      - "DNS:{{ host_public }}.{{ domain }}"
+      - "DNS:{{ name_public }}.{{ domain }}"
+      - "DNS:{{ name_other_public }}.{{ domain }}"
+  register: csr
+  when: not pub_rsa_check.stat.exists
+
+- name: Create public self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/fullchain.pem"
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/privkey.pem"
+    provider: selfsigned
+  when: not pub_rsa_check.stat.exists
+
+- name: Create intern certificate signing request (CSR)
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem"
+    common_name: "{{ name_intern }}.{{ domain }}"
+    organization_name: "Digitale Gesellschaft"
+    subject_alt_name:
+      - "DNS:{{ name_intern }}.{{ domain }}"
+  register: csr
+  when: not int_ecdsa_check.stat.exists
+
+- name: Create public self-signed certificate from CSR
+  community.crypto.x509_certificate:
+    path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem"
+    csr_content: "{{ csr.csr }}"
+    privatekey_path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem"
+    provider: selfsigned
+  when:
+    not pub_rsa_check.stat.exists
+
+    #
+    #- name: Create full chain files
+    #  copy:
+    #    src: "{{ item.src }}"
+    #    dest: "{{ item.dest }}"
+    #    # path: "{{ cert_path }}live/{{ item.name }}"
+    #    # state: touch
+    #    # mode: "0755"
+    #  loop:
+    #    - {
+    #        src: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/cert.pem",
+    #        dest: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem",
+    #      }
+    #    - {
+    #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/cert.pem",
+    #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/fullchain.pem",
+    #      }
+    #    - {
+    #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/cert.pem",
+    #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/fullchain.pem",
+    #      }

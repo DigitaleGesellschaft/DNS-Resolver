@@ -1,0 +1,5 @@
+---
+- name: Setup DNS Frontend
+  tags: frontend
+  block:
+    - import_tasks: dnsdist.yml

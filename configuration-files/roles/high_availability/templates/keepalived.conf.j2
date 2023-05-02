@@ -1,0 +1,77 @@
+vrrp_sync_group dns42 {
+  group {
+    dns42-4
+    dns42-6
+  }
+}
+
+vrrp_sync_group dns43 {
+  group {
+    dns43-4
+    dns43-6
+  }
+}
+
+vrrp_instance dns42-4 {
+  interface {{ if_primary }}
+  virtual_router_id 142
+  state BACKUP
+  priority {{ vrrp_prio_42 }}
+  advert_int 1
+  garp_master_delay 5
+  authentication {
+    auth_type pass
+    auth_password {{ keepalived_dns42_4 }}
+  }
+  virtual_ipaddress {
+    {{ ip4_vrrp1 }}/{{ netmask4_vrrp1_cidr }} dev {{ if_primary }}
+  }
+}
+
+vrrp_instance dns42-6 {
+  interface {{ if_primary }}
+  virtual_router_id 242
+  state BACKUP
+  priority {{ vrrp_prio_42 }}
+  advert_int 1
+  garp_master_delay 5
+  authentication {
+    auth_type pass
+    auth_password {{ keepalived_dns42_6 }}
+  }
+  virtual_ipaddress {
+    {{ ip6_vrrp1 }}/{{ netmask6_vrrp1_cidr }} dev {{ if_primary }}
+  }
+}
+
+vrrp_instance dns43-4 {
+  interface {{ if_primary }}
+  virtual_router_id 143
+  state BACKUP
+  priority {{ vrrp_prio_43 }}
+  advert_int 1
+  garp_master_delay 5
+  authentication {
+    auth_type pass
+    auth_password {{ keepalived_dns43_4 }}
+  }
+  virtual_ipaddress {
+    {{ ip4_vrrp2 }}/{{ netmask4_vrrp1_cidr }} dev {{ if_primary }}
+  }
+}
+
+vrrp_instance dns43-6 {
+  interface {{ if_primary }}
+  virtual_router_id 243
+  state BACKUP
+  priority {{ vrrp_prio_43 }}
+  advert_int 1
+  garp_master_delay 5
+  authentication {
+    auth_type pass
+    auth_password {{ keepalived_dns43_6 }}
+  }
+  virtual_ipaddress {
+    {{ ip6_vrrp2 }}/{{ netmask6_vrrp1_cidr }} dev {{ if_primary }}
+  }
+}

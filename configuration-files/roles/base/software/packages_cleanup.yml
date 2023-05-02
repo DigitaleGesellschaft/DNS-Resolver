@@ -1,0 +1,10 @@
+---
+- name: software | remove obsolet software packages
+  package:
+    state: absent
+    name:
+      - cowsay
+      - exim4
+      - exim4-base
+      - exim4-config
+      - nano

@@ -1,0 +1,22 @@
+---
+- name: software | install utility packages
+  package:
+    state: latest
+    name:
+      - curl
+      - dnsutils
+      - git
+      - htop
+      - iputils-ping
+      - net-tools
+      - netcat-openbsd
+      - openssh-client
+      - openssl
+      - rsync
+      - tcpdump
+      - telnet
+      - traceroute
+      - tree
+      - vim
+      - wget
+      - whois

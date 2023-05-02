@@ -1,0 +1,21 @@
+---
+- name: ssh | configure sshd
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regex: "^(#)?{{item.key}}"
+    line: "{{item.key}} {{item.value}}"
+    state: present
+  loop:
+    - { key: "AllowAgentForwarding", value: "no" } # disable tunneling feature
+    - { key: "AllowTcpForwarding", value: "no" } # disable tunneling feature
+    - { key: "ChallengeResponseAuthentication", value: "no" } # disable unused authentication method
+    - { key: "GSSAPIAuthentication", value: "no" } # disable authentication method
+    - { key: "KerberosAuthentication", value: "no" } # disable authentication method
+    - { key: "PasswordAuthentication", value: "no" } # disable SSH password authentication
+    - { key: "PermitEmptyPasswords", value: "no" } # disable authentication with empty passwords. This prevent logins if a user’s password is set to a blank or empty value
+    - { key: "PermitRootLogin", value: "no" } # disable logging in via SSH as the root user
+    - { key: "PermitTunnel", value: "no" } # disable tunneling feature
+    - { key: "Port", value: "{{ network_port_ssh }}" } # use custom listening port
+    - { key: "X11Forwarding", value: "no" } # disable unused X11 forwarding, console access only
+  notify:
+    - restart sshd

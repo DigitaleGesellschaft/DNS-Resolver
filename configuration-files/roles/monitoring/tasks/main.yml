@@ -1,0 +1,5 @@
+---
+- name: Setup Monitoring
+  tags: monitoring
+  block:
+    - import_tasks: munin.yml

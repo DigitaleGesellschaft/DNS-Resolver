@@ -1,0 +1,14 @@
+---
+- name: unbound | disable ubuntu systemd-resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+
+- name: unbound | configure system to use unbound resolver
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: "0777"

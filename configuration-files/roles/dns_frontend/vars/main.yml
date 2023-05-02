@@ -1,0 +1,10 @@
+---
+vip_interfaces:
+  - "{{ ip4_vip_dns1 }}"
+  - "{{ ip6_vip_dns1 }}"
+  - "{{ ip4_vip_dns2 }}"
+  - "{{ ip6_vip_dns2 }}"
+
+dnsdist_nof_thread_dot_per_ip: 3
+dnsdist_nof_thread_doh_per_ip: 3
+dnsdist_nof_thread_upstream: 4

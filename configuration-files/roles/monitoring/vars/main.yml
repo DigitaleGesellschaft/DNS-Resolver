@@ -1,0 +1,2 @@
+---
+node_exporter_web_listen_address: "{{ ip_localhost }}:9100"

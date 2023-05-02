@@ -1,0 +1,280 @@
+---
+- name: firewall | install software
+  package:
+    state: latest
+    name:
+      - iptables
+      - iptables-persistent
+
+- name: firewall | uninstall software
+  package:
+    state: absent
+    name:
+      - ufw
+
+- name: firewall | SSH | allow new incoming SYN packets on TCP port "{{ network_port_ssh }}" on v4 and v6
+  tags: init
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: INPUT
+    protocol: tcp
+    destination: "{{ item.ip }}"
+    destination_port: "{{ network_port_ssh }}"
+    ctstate:
+      - ESTABLISHED
+      - NEW
+      - RELATED
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", ip: "{{ ip4 }}" }
+    - { version: "ipv6", ip: "{{ ip6 }}" }
+  notify:
+    - persist rules
+
+- name: firewall | ICMP | allow ping
+  iptables:
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    jump: ACCEPT
+  loop:
+    - { protocol: "icmp" }
+    - { protocol: "ipv6-icmp" }
+  notify:
+    - persist rules
+
+- name: firewall | DNS | allow outgoing 53/udp
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    source_port: 53
+    ctstate:
+      - ESTABLISHED
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", protocol: "tcp" }
+    - { version: "ipv4", protocol: "udp" }
+    - { version: "ipv6", protocol: "tcp" }
+    - { version: "ipv6", protocol: "udp" }
+  notify:
+    - persist rules
+
+- name: firewall | HTTP | allow responding on 80/tcp and 443/tcp
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: INPUT
+    protocol: tcp
+    source_port: "{{ item.port }}"
+    ctstate: ESTABLISHED
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", port: "443" }
+    - { version: "ipv4", port: "80" }
+    - { version: "ipv6", port: "443" }
+    - { version: "ipv6", port: "80" }
+  notify:
+    - persist rules
+
+- name: firewall | NTP | allow NTP communication
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: INPUT
+    protocol: udp
+    source_port: 123
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4" }
+    - { version: "ipv6" }
+  notify:
+    - persist rules
+
+- name: firewall | loopback | allow loopback communication
+  iptables:
+    chain: INPUT
+    in_interface: "{{ if_loopback }}"
+    jump: ACCEPT
+  notify:
+    - persist rules
+
+- name: webserver | firewall | ensure port 31080/tcp is open on v6
+  iptables:
+    ip_version: "ipv6"
+    chain: "{{ item.chain }}"
+    protocol: tcp
+    destination: "{{ ip6 }}"
+    destination_port: 31080
+    jump: ACCEPT
+  loop:
+    - { chain: "INPUT" }
+    - { chain: "OUTPUT" }
+
+- name: firewall | DNS | reject unencrypted DNS
+  iptables:
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    destination_port: 53
+    jump: REJECT
+  loop:
+    - { protocol: "tcp" }
+    - { protocol: "udp" }
+
+# VRRP
+
+- name: firewall | VRRP | allow v4 anv v6 vrrp traffic
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: "{{ item.chain }}"
+    destination: "{{ item.ip }}"
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", chain: "INPUT", ip: "224.0.0.18" }
+    - { version: "ipv4", chain: "OUTPUT", ip: "224.0.0.18" }
+    - { version: "ipv6", chain: "INPUT", ip: "ff02::12/128" }
+    - { version: "ipv6", chain: "OUTPUT", ip: "ff02::12/128" }
+
+# DoT / DoH
+
+- name: firewall | DoH/DoT | incoming | set allow on 443/tcp and 853/tcp
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: "{{ item.chain }}"
+    protocol: tcp
+    destination_ports:
+      - 80
+      - 443
+      - 853
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", chain: "INPUT" }
+    - { version: "ipv4", chain: "OUTPUT" }
+    - { version: "ipv6", chain: "INPUT" }
+    - { version: "ipv6", chain: "OUTPUT" }
+  notify:
+    - persist rules
+
+- name: firewall | DoH/DoT | outgoing | set allow on 443/tcp and 853/tcp
+  iptables:
+    ip_version: "{{ item.version }}"
+    chain: "{{ item.chain }}"
+    protocol: tcp
+    source_port: "{{ item.port }}"
+    jump: ACCEPT
+  loop:
+    - { version: "ipv4", chain: "INPUT", port: 80 }
+    - { version: "ipv4", chain: "OUTPUT", port: 80 }
+    - { version: "ipv4", chain: "INPUT", port: 443 }
+    - { version: "ipv4", chain: "OUTPUT", port: 443 }
+    - { version: "ipv4", chain: "INPUT", port: 853 }
+    - { version: "ipv4", chain: "OUTPUT", port: 853 }
+    - { version: "ipv6", chain: "INPUT", port: 80 }
+    - { version: "ipv6", chain: "OUTPUT", port: 80 }
+    - { version: "ipv6", chain: "INPUT", port: 443 }
+    - { version: "ipv6", chain: "OUTPUT", port: 443 }
+    - { version: "ipv6", chain: "INPUT", port: 853 }
+    - { version: "ipv6", chain: "OUTPUT", port: 853 }
+  notify:
+    - persist rules
+
+- name: firewall | DoH/DoT | incoming | prerouting | set notrack on 443/tcp and 853/tcp
+  iptables:
+    table: raw
+    chain: PREROUTING
+    protocol: tcp
+    destination_ports:
+      - 443
+      - 853
+    jump: NOTRACK
+  notify:
+    - persist rules
+
+- name: firewall | DoH/DoT | outgoing | prerouting | set notrack on 443/tcp and 853/tcp
+  iptables:
+    table: raw
+    chain: PREROUTING
+    protocol: tcp
+    source_port: "{{ item.port }}"
+    jump: NOTRACK
+  loop:
+    - { port: 443 }
+    - { port: 853 }
+  notify:
+    - persist rules
+
+- name: firewall | DoH/DoT | incoming | ouput | set notrack on 443/tcp and 853/tcp
+  iptables:
+    table: raw
+    chain: OUTPUT
+    protocol: tcp
+    destination_ports:
+      - 443
+      - 853
+    jump: NOTRACK
+  notify:
+    - persist rules
+
+- name: firewall | DoH/DoT | outgoing | ouput | set notrack on 443/tcp and 853/tcp
+  iptables:
+    table: raw
+    chain: OUTPUT
+    protocol: tcp
+    source_port: "{{ item.port }}"
+    jump: NOTRACK
+  loop:
+    - { port: 443 }
+    - { port: 853 }
+  notify:
+    - persist rules
+
+# Statistics
+
+- name: firewall | statistics | input | munin rules to measure traffic
+  iptables:
+    ip_version: "{{ item.version }}"
+    action: insert
+    chain: INPUT
+    destination: "{{ item.ip }}"
+  loop:
+    - { version: "ipv4", ip: "{{ ip4 }}" }
+    - { version: "ipv6", ip: "{{ ip6 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vrrp1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vrrp1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vrrp2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vrrp2 }}" }
+    - { version: "ipv4", ip: "{{ ip4_dns1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_dns1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_dns2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_dns2 }}" }
+  notify:
+    - persist rules
+
+- name: firewall | statistics | input |  munin rules to measure traffic
+  iptables:
+    ip_version: "{{ item.version }}"
+    action: insert
+    chain: OUTPUT
+    source: "{{ item.ip }}"
+  loop:
+    - { version: "ipv4", ip: "{{ ip4 }}" }
+    - { version: "ipv6", ip: "{{ ip6 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vrrp1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vrrp1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vrrp2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vrrp2 }}" }
+    - { version: "ipv4", ip: "{{ ip4_dns1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_dns1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_dns2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_dns2 }}" }
+  notify:
+    - persist rules
+
+# Drop policy
+
+- name: firewall | drop on chain INPUT and FORWARD
+  iptables:
+    chain: "{{ item.chain }}"
+    policy: DROP
+  loop:
+    - { chain: "INPUT" }
+    - { chain: "FORWARD" }
+  notify:
+    - persist rules

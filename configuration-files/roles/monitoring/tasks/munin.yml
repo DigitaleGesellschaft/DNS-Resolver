@@ -1,0 +1,78 @@
+---
+- name: munin | install
+  package:
+    state: latest
+    name:
+      - munin
+      - conntrack
+
+- name: munin | add unbound statistics
+  blockinfile:
+    path: /etc/munin/plugin-conf.d/munin-node
+    block: |
+      [unbound*]
+      user root
+      env.statefile /var/lib/munin-node/plugin-state/unbound-state
+      env.unbound_conf /etc/unbound/unbound.conf
+      env.unbound_control /usr/sbin/unbound-control
+
+      [fw_*]
+      user root
+  notify:
+    - restart munin
+
+- name: munin | make munin less verbose
+  lineinfile:
+    path: "/etc/munin/munin-node.conf"
+    regex: "^(#)?{{item.key}}"
+    line: "{{item.key}} {{item.value}}"
+    state: present
+  loop:
+    - { key: "log_level", value: "0" }
+
+- name: munin | configure symlinks
+  file:
+    src: "/usr/share/munin/plugins/{{ item.from }}"
+    dest: "/etc/munin/plugins/{{ item.to }}"
+    state: link
+  loop:
+    - { from: "unbound_munin_", to: "unbound_munin_by_class" }
+    - { from: "unbound_munin_", to: "unbound_munin_by_flags" }
+    - { from: "unbound_munin_", to: "unbound_munin_by_opcode" }
+    - { from: "unbound_munin_", to: "unbound_munin_by_rcode" }
+    - { from: "unbound_munin_", to: "unbound_munin_by_type" }
+    - { from: "unbound_munin_", to: "unbound_munin_histogram" }
+    - { from: "unbound_munin_", to: "unbound_munin_hits" }
+    - { from: "unbound_munin_", to: "unbound_munin_memory" }
+    - { from: "unbound_munin_", to: "unbound_munin_queue" }
+    - { from: "ip_", to: "ip_{{ ip4_vip_dns1 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_vip_dns1 }}" }
+    - { from: "ip_", to: "ip_{{ ip4_vip_dns2 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_vip_dns2 }}" }
+    - { from: "ip_", to: "ip_{{ ip4_vrrp1 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_vrrp1 }}" }
+    - { from: "ip_", to: "ip_{{ ip4_vrrp2 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_vrrp2 }}" }
+    - { from: "ip_", to: "ip_{{ ip4_dns1 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_dns1 }}" }
+    - { from: "ip_", to: "ip_{{ ip4_dns2 }}" }
+    - { from: "ip_", to: "ip_{{ ip6_dns2 }}" }
+    - { from: "port_", to: "port_53" }
+    - { from: "port_", to: "port_80" }
+    - { from: "port_", to: "port_443" }
+    - { from: "port_", to: "port_853" }
+    - { from: "port_", to: "port_55022" }
+    - { from: "port_", to: "port_31080" }
+    - { from: "tcp", to: "tcp" }
+    - { from: "fw_conntrack", to: "fw_conntrack" }
+    - { from: "fw_packets", to: "fw_packets" }
+  notify:
+    - restart munin
+
+- name: munin | generate htaccess file
+  template:
+    src: htpasswd.j2
+    dest: /var/cache/munin/www/.htpasswd
+    owner: root
+    group: root
+    mode: "0644"

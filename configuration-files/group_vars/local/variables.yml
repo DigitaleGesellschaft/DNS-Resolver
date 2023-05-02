@@ -1,0 +1,33 @@
+---
+if_loopback: lo
+ip_localhost: 127.0.0.1
+
+ip4_vip_dns1: 10.52.7.42
+ip6_vip_dns1: fd42:56b6:246b:67bc::42
+ip4_vip_dns2: 10.52.7.43
+ip6_vip_dns2: fd42:56b6:246b:67bc::43
+
+ip4_vrrp1: 10.52.7.125
+ip6_vrrp1: fd42:56b6:246b:67bc::125
+ip4_vrrp2: 10.52.7.126
+ip6_vrrp2: fd42:56b6:246b:67bc::126
+netmask4_vrrp1_cidr: 32
+netmask6_vrrp1_cidr: 128
+
+if_primary: eth0
+ip4_dns1: 10.52.7.116
+ip6_dns1: fd42:56b6:246b:67bc::116
+ip4_dns2: 10.52.7.117
+ip6_dns2: fd42:56b6:246b:67bc::117
+netmask4_dns_cidr: 28
+netmask6_dns_cidr: 64
+dg4_dns: 185.95.216.113
+dg6_dns: fe80::1
+
+host_public: dns
+domain: "digitale-gesellschaft.ch"
+
+cert_path: "/etc/ssl/"
+
+ip6_old_res1: 2a05:fc84:0:5::116 # remove this line after migration once old servers are shut down
+ip6_old_res2: 2a05:fc84:0:5::117 # remove this line after migration once old servers are shut down

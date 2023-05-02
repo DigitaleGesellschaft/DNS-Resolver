@@ -1,0 +1,18 @@
+---
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: persist rules
+  community.general.iptables_state:
+    state: saved
+    path: "/etc/iptables/rules.{{ item.ip_version }}"
+  loop:
+    - { ip_version: "v4" }
+    - { ip_version: "v6" }
+
+- name: apply netplan
+  command: sudo netplan apply
+  async: 45
+  poll: 0

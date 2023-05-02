@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: Update Repository Index
+      tags: always
+      apt:
+        update_cache: yes
+      changed_when: false
+
+- hosts: all
+  become: true
+  roles:
+    - base
+    - high_availability
+    - dns_backend
+    - dns_frontend
+    - web_server
+    - monitoring

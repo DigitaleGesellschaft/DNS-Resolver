@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+mkdir -p /var/run/acme/acme-challenge
+
+# change private key file permission as of https://eff-certbot.readthedocs.io/en/stable/using.html#where-are-my-certificates
+chgrp _dnsdist /etc/letsencrypt/live/dns.digitale-gesellschaft.ch.ecdsa/privkey.pem
+chmod 0640 /etc/letsencrypt/live/dns.digitale-gesellschaft.ch.ecdsa/privkey.pem
+chgrp _dnsdist /etc/letsencrypt/live/dns.digitale-gesellschaft.ch.rsa/privkey.pem
+chmod 0640 /etc/letsencrypt/live/dns.digitale-gesellschaft.ch.rsa/privkey.pem
+
+# reload dnsdist in running dnsdist process
+dnsdist -c 127.0.0.1:5199 -e 'reloadAllCertificates()'

@@ -1,0 +1,23 @@
+network:
+  ethernets:
+    {{ if_loopback }}:
+      addresses:
+      - {{ ip4_vip_dns1 }}/32
+      - {{ ip6_vip_dns1 }}/128
+      - {{ ip4_vip_dns2 }}/32
+      - {{ ip6_vip_dns2 }}/128
+    {{ if_primary }}:
+      addresses:
+      - {{ ip4 }}/{{ netmask4_dns_cidr }}
+      - {{ ip6 }}/{{ netmask6_dns_cidr }}
+      nameservers:
+        addresses:
+        - 127.0.0.1
+        search: []
+      routes:
+      - to: default
+        via: {{ dg4_dns }}
+      - on-link: true
+        to: ::/0
+        via: {{ dg6_dns }}
+  version: 2

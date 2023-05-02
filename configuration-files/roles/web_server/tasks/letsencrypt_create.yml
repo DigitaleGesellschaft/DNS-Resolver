@@ -1,0 +1,9 @@
+---
+- name: Create internal ECDSA certificate for {{ name_intern }}.{{ domain }}
+  command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type ecdsa --cert-name {{ name_intern }}.{{ domain }}.ecdsa -d {{ name_intern }}.{{ domain }}
+
+- name: Create public ECDSA certificate for [{{ host_public }}|{{ name_public }}|{{ name_other_public }}].{{ domain }}
+  command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type ecdsa --cert-name {{ host_public}}.{{ domain }}.ecdsa -d {{ host_public }}.{{ domain }} -d {{ name_public }}.{{ domain }} -d {{ name_other_public }}.{{ domain }}
+
+- name: Create public RSA certificate for [{{ host_public }}|{{ name_public }}|{{ name_other_public }}].{{ domain }}
+  command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type rsa --cert-name {{ host_public}}.{{ domain }}.rsa -d {{ host_public }}.{{ domain }} -d {{ name_public }}.{{ domain }} -d {{ name_other_public }}.{{ domain }}

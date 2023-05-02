@@ -1,0 +1,27 @@
+---
+- name: dnsdist | install
+  package:
+    state: latest
+    name: dnsdist
+
+- name: dnsdist | check if service certificate available
+  stat:
+    path: "{{ cert_path}}live/{{ host_public }}.{{ domain }}.ecdsa/"
+  register: service_certificate
+
+- name: dnsdist | ensure dnsdist is started
+  service:
+    name: dnsdist
+    state: started
+  when: service_certificate.stat.exists
+
+- name: dnsdist | generate config file from template
+  template:
+    src: dnsdist.conf.j2
+    dest: /etc/dnsdist/dnsdist.conf
+    owner: root
+    group: _dnsdist
+    mode: "0644"
+  when: service_certificate.stat.exists
+  notify:
+    - restart dnsdist

@@ -1,0 +1,141 @@
+-- ---------------------------------------------------------------------------------------------------------------------
+--
+-- CAUTION: This file was generated automatically with Ansible. Manual changes will be overwritten.
+--
+-- dnsdist configuration of the Digital Society Switzerland on their public DNS resolvers.
+-- see also https://www.digitale-gesellschaft.ch/dns/
+--
+--     DoH: https://dns.digitale-gesellschaft.ch/dns-query
+--     DoT: dns.digitale-gesellschaft.ch:853
+--
+-- In principle, we do not block name resolutions. However, if our service is abused to the harm of others, individual
+-- IP addresses or ranges or domain names are temporarily blocked to prevent the attack. Afterward, the blocks are
+-- lifted again.
+--
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- ACL
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- Accept requests from all over the Internet. Any IP v4 or v6 address is allowed to query.
+setACL({ "0.0.0.0/0", "::/0" })
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Blocking (static)
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- example of a static domain block
+--addAction("example.org.", DropAction())
+
+-- example of a static ip range block
+--addAction({ "130.161.0.0/16", "145.14.0.0/16" }, DropAction())
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Blocking (dynamic)
+--
+-- Dynamic blocking rules are active for monitoring purposes but do not block. Should our systems be exploited, the
+-- action can be configured to DNSAction.Drop.
+-- ---------------------------------------------------------------------------------------------------------------------
+
+local dbr = dynBlockRulesGroup()
+
+--                                     rate,  seconds,  reason,                    blockingTime,  action
+
+dbr:setQueryRate(                      250,   10,       "Exceeded query rate",     60,            DNSAction.Allow )
+dbr:setResponseByteRate(               10000, 10,       "Exceeded resp BW rate",   60,            DNSAction.Allow )
+dbr:setRCodeRate( DNSRCode.NXDOMAIN,   20,    10,       "Exceeded NXD rate",       60,            DNSAction.Allow )
+dbr:setRCodeRate( DNSRCode.SERVFAIL,   20,    10,       "Exceeded ServFail rate",  60,            DNSAction.Allow )
+dbr:setQTypeRate( DNSQType.PTR,        20,    10,       "Exceeded PTR rate",       60,            DNSAction.Allow )
+dbr:setQTypeRate( DNSQType.NS,         20,    10,       "Exceeded NS rate",        60,            DNSAction.Allow )
+dbr:setQTypeRate( DNSQType.ANY,        20,    10,       "Exceeded ANY rate",       60,            DNSAction.Allow )
+
+function maintenance()
+  dbr:apply()
+end
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Frontend Cache
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- cache size of 20'000'000 entire (~ 16GB)
+local pc = newPacketCache( 20000000, { maxTTL = 86400, minTTL = 0, temporaryFailureTTL = 60, staleTTL = 60, dontAge = false} )
+
+-- use default server pool
+getPool(""):setCache(pc)
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Listeners
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- DoT Frontend
+{% for interf in vip_interfaces %}
+{% for i in range(dnsdist_nof_thread_dot_per_ip) %}
+addTLSLocal( "{{ interf }}",
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
+             { doTCP = true, exactPathMatching = true, minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
+           )
+{% endfor %}
+{% endfor %}
+
+-- DoH Frontend
+{% for interf in vip_interfaces %}
+{% for i in range(dnsdist_nof_thread_doh_per_ip) %}
+addDOHLocal( "{{ interf }}",
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
+             { "/", "/dns-query" },
+             { doTCP = true, exactPathMatching = true, minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
+           )
+{% endfor %}
+{% endfor %}
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Upstream DNS resolver (unbound)
+-- ---------------------------------------------------------------------------------------------------------------------
+
+{% for i in range(dnsdist_nof_thread_upstream) %}
+newServer({ address="{{ ip_localhost }}", name="backend-{{ i }}" })
+{% endfor %}
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Monitoring
+--
+-- Web based live monitoring of dnsdist.
+--
+--     https://{{ name_intern }}.{{ domain }}/dnsdist
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- dnsdist web server
+webserver("127.0.0.1:8083")
+setWebserverConfig( { password = "{{ dnsdist_webserver_password }}", apiKey = "{{ dnsdist_webserver_api_key }}" })
+
+-- redirect https request to nginx webserver
+map = { newDOHResponseMapEntry("^/$", 302, "https://{{ name_intern }}.{{ domain }}/") }
+
+{% for i in range(vip_interfaces|length) %}
+{% for j in range(dnsdist_nof_thread_doh_per_ip) %}
+local dohFE = getDOHFrontend({{ i * dnsdist_nof_thread_doh_per_ip + j }})
+dohFE:setResponsesMap(map)
+{% endfor %}
+{% endfor %}
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Debugging
+--
+-- Live debugging and insights into dnsdist control interface.
+--
+--     dnsdist -c 127.0.0.1:5199
+-- ---------------------------------------------------------------------------------------------------------------------
+
+controlSocket("127.0.0.1:5199")
+setKey("{{ dnsdist_control_interface_key }}")

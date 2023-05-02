@@ -1,0 +1,28 @@
+---
+- name: unbound | install
+  package:
+    state: latest
+    name: unbound
+
+- name: unbound | increase memory for so-sndbuf and so-rcvbuf
+  blockinfile:
+    path: /etc/sysctl.conf
+    marker: "# {mark} MANAGED BY ANSIBLE - unbound | increase memory for so-sndbuf and so-rcvbuf"
+    block: |
+      net.core.rmem_max = 8388608
+      net.core.wmem_max = 8388608
+
+- name: unbound | started
+  service:
+    name: unbound
+    state: started
+
+- name: unbound | generate config file from template
+  template:
+    src: unbound.conf.j2
+    dest: /etc/unbound/unbound.conf
+    owner: root
+    group: unbound
+    mode: "0644"
+  notify:
+    - restart unbound

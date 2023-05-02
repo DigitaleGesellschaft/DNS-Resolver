@@ -1,0 +1,6 @@
+---
+prod:
+  hosts:
+    dns1:
+    dns2:
+local:

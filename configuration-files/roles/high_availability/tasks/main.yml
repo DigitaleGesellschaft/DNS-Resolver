@@ -1,0 +1,5 @@
+---
+- name: Setup High Availability
+  tags: highavailability
+  block:
+    - import_tasks: keepalived.yml
