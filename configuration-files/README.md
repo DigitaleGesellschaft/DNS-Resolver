@@ -33,7 +33,7 @@ Our two servers have an identical setup. Here is a deployment diagram as an over
 
 ### Unbound
 
-- [unbound.conf](unbound/unbound.conf) `/etc/unbound/unbound.conf` Nginx configuration file.
+- [unbound.conf](unbound/unbound.conf) `/etc/unbound/unbound.conf` Unbound configuration file.
 
 
 ### DNS-over-HTTPS
