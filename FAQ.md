@@ -2,43 +2,42 @@
 
 This document covers frequently asked questions about our secure DNS resolver systems.
 
+## General
 
-0. Is the service primarily intended for users living in Swiss, or do you also have points of presence in other countries (which ones)?
+1. Can I use your secure DNS resolvers for private usage?
+    - Yes.
 
-   Our servers are located in Zurich/Switzerland and are primarily intended for people living in Switzerland or in close neighbour countries due to low latency. Our services are accessible and usable form around the world tough.
+2. Why does the Digital Society provide this service?
+    - We think a decentralised and censor resistent Internet is important for our society.
 
-0. What would you say is the capacity of the service?
+3. How can I help?
+    - There are several things you can do:
+        - Review our [configuration files](configuration-files) and [guides](howtos) and improve them.
+        - The annual costs for operating the servers amount to 1'000 CHF. Perhaps it is possible for you to make
+          a [donation](https://www.digitale-gesellschaft.ch/uber-uns/unterstuetzer-werden/).
 
-   Our DNS resolver services are stable and intended for production use. We have two load sharing servers with a weekly average of about 100 QPS each (July 2020). The servers still have a lot of capacity. Keep in mind we are a charitable organisation and therefore only provide best effort support and availability due to our voluntary engagement.
+### For Companies
 
-0. Are you aware of any differences between your implementation of DoH and the spec [RFC8484](https://tools.ietf.org/html/rfc8484)?
+1. Can I use your secure DNS resolvers for our employees?
+    - Technically yes, but we encourage you to set up your own secure resolvers.
 
-   We are compliant with RFC8484.
+## Servers
 
-0. Do you know if your service is compliant with this [RFC3597](https://tools.ietf.org/html/rfc3597) detailing how to handle unknown DNS resource record (RR) types?
+1. Where are the DNS resolvers located?
+    - Zurich, Switzerland
 
-   We are compliant with RFC3597.
+## Configuration
 
-0. Are you blocking / filtering any domain?
+1. Can I use your service for plain text (unencrypted) DNS?
+    - No, we only provide encrypted DNS-over-HTTPS or DNS-over-TLS. We deliberately do not operate a plain text DNS to
+      avoid user configuration errors.
 
-   We deliberately do not block or filter any domains.
+## Technical Questions
 
-0. When a domain doesn't exist, does your service respond with NXDOMAIN?
+1. Do you block any domains?
+    - No, we do not block any domain. Checkout our transparency reports and privacy
+      notice: https://www.digitale-gesellschaft.ch/dns/ However, we do temporarily block clients or requests if they
+      have malicious behaviour and/or impact our service for other users.
 
-   Yes, non-existing domains are answered with NXDOMAIN.
-
-0. Is there an associated regular DNS service on a public IP address or is it a DoH only service?
-
-   We provide DoH and DoT only DNS resolvers. We deliberately do not operate unencrypted DNS on 53/udp/tcp.
-
-0. Is there an IP address rate limit implemented?
-
-   No.
-
-0. Do you provide an alternate DNS address that blocks ads/malware/trackers domains?
-
-   No, currently not.
-
-0. Do you support DNSCrypt?
-
-   No, currently not.
+2. Do you support DNSCrypt?
+    - No, currently not.

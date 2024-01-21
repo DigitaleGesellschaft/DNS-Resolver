@@ -1,54 +1,47 @@
-# DNS-Resolver
-Technical overview and configuration files of our public DoT and DoH DNS resolvers.
+# Secure DNS Resolver
 
+Information, configuration files and _how tos_ about the public secure DNS resolvers operated by the Digital Society
+Switzerland.
 
-The Digital Society Switzerland runs two publicly available DoH and DoT DNS resolver systems. In this repository we provide various configuration [instructions](howtos/) so you can use our service. To use transparency and a diverse Internet is very important, therefore we provide our live [configuration](configuration-files/). Everyone is welcome to copy our configuration and run his/her own secure DNS resolver.
+The Digital Society Switzerland runs publicly available DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) DNS resolver
+systems.
 
-Our DNS resolvers:
+![Secure DNS resolver in a pig picture](assets/Secure-DNS-Resolver-Big-Picture-100p.png)
 
-- DoT: `dns.digitale-gesellschaft.ch:853`
-- DoH: `https://dns.digitale-gesellschaft.ch/dns-query`
+This repository contains:
 
-Do you have improvement suggestions and/or questions about our configuration? Check out our [FAQ](FAQ.md) or get in contact with us. More information can be found [here](https://www.digitale-gesellschaft.ch/dns/) (German only).
+- [Configuration files](configuration-files) of our production systems. Anyone interested in our setup can review our
+  production configuration or run its own setup based on our configuration files. You may also check out
+  our [system architecture](ARCHITECTURE.md).
+- [How tos](howtos) to configure encrypted DNS on various devices. This allows people to use our secure DNS resolvers.
 
-The following illustration describes the idea of our secure DNS service.
+Also, checkout our [website](https://www.digitale-gesellschaft.ch/dns/) and the [FAQ](FAQ.md).
 
-![Secure DNS resolver in a pig picture](img/Secure-DNS-Resolver-Big-Picture-100p.png)
+# How to use our DNS resolvers
 
+To use our DNS resolvers on your DoH or DoT capable client simply configure:
 
-## Technical Information & Configuration How To’s
+| Protocol             | Address                                                                                          |
+|----------------------|--------------------------------------------------------------------------------------------------|
+| DNS-over-HTTPS (DoH) | `https://dns.digitale-gesellschaft.ch/dns-query`                                                 |
+| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch` if you need to specify also a Port use the DoT default Port `853` |
 
-Technically every DNS-over-HTTPS or DNS-over-TLS conform software or system is able to be configured to our public services. Simply point them to our secure DNS resolvers:
+For specific configuration check out our [How-Tos](howtos).
 
-- DoT: `dns.digitale-gesellschaft.ch:853`
-- DoH: `https://dns.digitale-gesellschaft.ch/dns-query`
+**Note:** We deliberately do not operate unencrypted DNS service over Port 53.
 
-In case you want IP addresses use these:
+# Contribution
 
-- `2a05:fc84::42`
-- `2a05:fc84::43`
-- `185.95.218.42`
-- `185.95.218.43`
+Contributions to this project are very welcome. If you like to contribute, check-out [CONTRIBUTION](CONTRIBUTION.md) for
+more information.
 
-These are virtual IP addresses (VRRP) and are shared by our server instances.
+# Similar Services
 
-The following list gives you some ideas how to configure your software or system to use our secure DNS resolvers. The list of how-tos is not complete. Feel free to add configuration instructions or translations in other languages via a pull request (PR).
+You may also try the DNS resolvers of similar organisations and setups:
 
-### Browser Configuration
+- [Applied Privacy](https://applied-privacy.net/services/dns/) operates public DNS resolvers in Austria.
+- [Quad9](https://www.quad9.net/) operates public DNS resolvers around the world.
 
-- Firefox with DoH: [German](howtos/browser/firefox-DE.md)
-- Opera with DoH: [German](howtos/browser/opera-DE.md)
-- Chrome / Chromium with DoH: [German](howtos/browser/chrome-DE.md)
+# License
 
-
-### Operating System
-
-- Android / Lineage OS with DoT: [German](howtos/os/android-DE.md)
-- iOS Profile: [German](howtos/os/ios-DE.md)
-
-
-### Other
-
-- Curl with DoH: [German](howtos/other/curl-DE.md)
-- Stubby with DoT: [German](howtos/other/stubby-DE.md)
-- Turris Omnia / OpenWRT with DoT: [German](howtos/other/turris-omnia-DE.md)
+This project is licensed under [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/4.0/deed.en)
