@@ -12,8 +12,12 @@ server:
   pidfile: "/etc/unbound/unbound.pid"
   username: unbound
 
-  # listen on all IP addresses assigned to this network interface
+  # listen on localhost
   interface: {{ ip_localhost }}
+
+  # use non-VRRP IP to connect to remote servers
+  outgoing-interface: {{ ip4 }}
+  outgoing-interface: {{ ip6 }}
 
   access-control: 127.0.0.0/8 allow
 

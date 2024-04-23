@@ -6,6 +6,7 @@
 
 - name: persist rules
   community.general.iptables_state:
+    ip_version: "ip{{ item.ip_version }}"
     state: saved
     path: "/etc/iptables/rules.{{ item.ip_version }}"
   loop:
