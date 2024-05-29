@@ -164,9 +164,6 @@
     chain: PREROUTING
     protocol: tcp
     destination: "{{ item.ip }}"
-    destination_ports:
-      - "443"
-      - "853"
     jump: NOTRACK
   loop:
     - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
@@ -207,21 +204,20 @@
     chain: OUTPUT
     protocol: tcp
     source: "{{ item.ip }}"
-    source_port: "{{ item.port }}"
     jump: NOTRACK
   loop:
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "80" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "80" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "80" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "80" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "443" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "443" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "443" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "443" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "853" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "853" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "853" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "853" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
+    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
+    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
   notify:
     - persist rules
 
