@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
+mkdir -p /var/run/acme/acme-challenge
+
 # renew certificates
 certbot certonly --config /etc/letsencrypt/cli.ini -d "{{ name_intern }}.digitale-gesellschaft.ch"
 certbot certonly --config /etc/letsencrypt/cli.ini --key-type ecdsa --cert-name dns.digitale-gesellschaft.ch.ecdsa --deploy-hook /usr/local/sbin/letsencrypt-deploy-hook
 certbot certonly --config /etc/letsencrypt/cli.ini --key-type rsa --cert-name dns.digitale-gesellschaft.ch.rsa --deploy-hook /usr/local/sbin/letsencrypt-deploy-hook
-
-# reload Nginx config
-systemctl reload nginx
