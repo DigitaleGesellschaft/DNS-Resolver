@@ -2,17 +2,15 @@
 
 Mozilla hat DoH ab Firefox Version 62 integriert.
 
-
 ## Grundeinstellung
 
 Diese Einstellungen sind alle per grafischem User Interface (GUI) durchführbar und können relativ einfach und schnell konfiguriert werden.
 
-  0. Öffne die _Einstellungen_ via _Extras_ im Menü.
-  0. Scrolle im Bereich _Allgemein_ ganz nach unten und wähle in der Sektion Verbindungs-Einstellungen den Knopf _Einstellungen_.
-  0. Aktiviere _DNS über HTTPS aktivieren_ und wähle Benutzerdefiniert. Im neuen Feld nun URL `https://dns.digitale-gesellschaft.ch/dns-query` eingeben.
+0. Öffne die _Einstellungen_ via _Extras_ im Menü.
+1. Scrolle im Bereich _Allgemein_ ganz nach unten und wähle in der Sektion Verbindungs-Einstellungen den Knopf _Einstellungen_.
+2. Aktiviere _DNS über HTTPS aktivieren_ und wähle Benutzerdefiniert. Im neuen Feld nun URL `https://dns.digitale-gesellschaft.ch/dns-query` eingeben.
 
 ![Firefox mit DoH konfigurieren](img/ff-doh-EN.png)
-
 
 ## Experten
 

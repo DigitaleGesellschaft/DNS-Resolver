@@ -16,12 +16,13 @@ We do not keep sensitive information in this repository. Create these files:
 
 - In the `locl.yml` file the two systems `localdns1` and `localdns2` are referred. In order Ansible knows these host
   systems they need to be in the SSH configuration `~/.ssh/config` file e.g.:
+
   ```
   host localdns1
   User $USER
   Hostname <ip>
   Port <port>
-  
+
   host localdns2
   User $USER
   Hostname <ip>
@@ -31,13 +32,14 @@ We do not keep sensitive information in this repository. Create these files:
 - Create a user to connect to. This might be your current user on your local machine. Create a file
   in `configuration-files/roles/base/tasks/users/$USER.yml` with this content. Change `$USER` with your current
   username.
+
   ```
   ---
   - name: users | $USER | create group
     group:
     name: $USER
     state: present
-  
+
   - name: users | $USER | create user
     user:
     name: $USER
@@ -46,7 +48,7 @@ We do not keep sensitive information in this repository. Create these files:
     state: present
     comment: "$USER"
     shell: /bin/bash
-  
+
   - name: users | $USER | add ssh public key
     authorized_key:
     user: $USER
@@ -55,39 +57,44 @@ We do not keep sensitive information in this repository. Create these files:
 
 - Create an encrypted secret file for ansible secrets. Contains secrets and passphrases in key-values pairs and is
   located in `configuration-files/group_vars/local/vault.yml`.
-    - Create a new encrypted file by running `ansible-vault create configuration-files/group_vars/local/vault.yml` and
-      add the following content (these are example secrets):
-      ```
-      dnsdist_control_interface_key: "KZ0-+U?T"
-      dnsdist_webserver_api_key: "K[F|8I9?"
-      dnsdist_webserver_password: "Lj9*kN?Z"
-      keepalived_dns42_4: "tT,"f"?R"
-      keepalived_dns42_6: "1}[&Is>x"
-      keepalived_dns43_4: "`B<VDz?p"
-      keepalived_dns43_6: "3+=rnF8="
-      statisitcs_user: statisticsUser
-      statistics_password: "PBawJ~^Q"
-      ```
+  - Create a new encrypted file by running `ansible-vault create configuration-files/group_vars/local/vault.yml` and
+    add the following content (these are example secrets):
+    ```
+    dnsdist_control_interface_key: "KZ0-+U?T"
+    dnsdist_webserver_api_key: "K[F|8I9?"
+    dnsdist_webserver_password: "Lj9*kN?Z"
+    keepalived_dns42_4: "tT,"f"?R"
+    keepalived_dns42_6: "1}[&Is>x"
+    keepalived_dns43_4: "`B<VDz?p"
+    keepalived_dns43_6: "3+=rnF8="
+    statisitcs_user: statisticsUser
+    statistics_password: "PBawJ~^Q"
+    ```
 
 ## Set up resolver
 
 1. Create two linux containers by running:
+
    ```shell
    ./configuration-files/scripts/local-lxc-setup.sh init
    ```
 
 2. Try to connect to both servers:
+
    ```shell
    ssh $USER@localdns1 -p 22
    ssh $USER@localdns2 -p 22
    ```
+
    Once you can connect successfully, proceed with the next step.
 
 3. Configure SSH to on both resolvers:
+
    ```shell
    ansible-playbook --ask-become-pass --ask-vault-pass configuration-files/resolver.yml -i configuration-files/local.yml \
    --ssh-common-args '-p 22 -l $USER' --tags 'ssh'
    ```
+
    Once the Ansible successfully finishes, proceed with tne next step.
 
 4. Configure the complete DNS resolvers:

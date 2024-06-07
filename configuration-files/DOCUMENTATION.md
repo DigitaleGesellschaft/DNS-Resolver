@@ -3,10 +3,10 @@
 ## Important Files
 
 | File                       | Description                                                                                                                                  |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | ansible.cfg                | Ansible configuration file.                                                                                                                  |
-| group_vars/*               | Variables for local staging and productive DNS resolvers. Also contains the specific vault.yml files (these are not part of this repository) |
-| host_vars/*                | Variables specific to Ansible controlled host.                                                                                               |
+| group_vars/\*              | Variables for local staging and productive DNS resolvers. Also contains the specific vault.yml files (these are not part of this repository) |
+| host_vars/\*               | Variables specific to Ansible controlled host.                                                                                               |
 | inventory.yml              | Productive DNS resolver hostnames referencing entries in the local ./ssh/config hostnames.                                                   |
 | local.yml                  | Local staging DNS resolver hostnames referencing entries in the local ./ssh/config hostnames.                                                |
 | resolver.yml               | This is the actual Ansible playbook. It specifies what roles shall be applied to what hosts.                                                 |
@@ -15,7 +15,7 @@
 ## Roles
 
 | Role              | Description                                                                                        |
-|-------------------|----------------------------------------------------------------------------------------------------|
+| ----------------- | -------------------------------------------------------------------------------------------------- |
 | base              | Basic server setup, user configuration, tool and package installation for basic server management. |
 | dns-backend       | Backend DNS resolver configuration, communicates with the domain name system (the Internet).       |
 | dns-frontend      | Frontend DNS resolver configuration, encrypted communicates with the users who use our service.    |
@@ -26,7 +26,7 @@
 ## Ansible Variables
 
 | Variable name                      | Description                                                |
-|------------------------------------|------------------------------------------------------------|
+| ---------------------------------- | ---------------------------------------------------------- |
 | `dg4_dns`                          | IP v4 default gateway                                      |
 | `dg6_dns`                          | IP v6 default gateway                                      |
 | `dnsdist_nof_thread_doh_per_ip`    | Number of dnsdist threads per DoH IP                       |

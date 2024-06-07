@@ -21,10 +21,10 @@ Also, checkout our [website](https://www.digitale-gesellschaft.ch/dns/) and the 
 
 To use our DNS resolvers on your DoH or DoT capable client simply configure:
 
-| Protocol             | Address                                          |
-|----------------------|--------------------------------------------------|
-| DNS-over-HTTPS (DoH) | `https://dns.digitale-gesellschaft.ch/dns-query` |
-| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch`                   |
+| Protocol             | Address                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| DNS-over-HTTPS (DoH) | `https://dns.digitale-gesellschaft.ch/dns-query`                                                 |
+| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch` if you need to specify also a Port use the DoT default Port `853` |
 
 For specific configuration check out our [How-Tos](howtos).
 
@@ -39,7 +39,7 @@ Some ideas where help is appreciated:
 
 - Configuration how tos: Update existing guides, translate them in other languages and add new how tos.
 - Ansible config review: If you know Ansible well you may review our configuration and suggest improvements.
-- DNS config: If you know 
+- DNS config: If you know
 
 # Similar Services
 
