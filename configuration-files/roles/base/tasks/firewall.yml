@@ -106,17 +106,36 @@
 
 # Let's Encrypt ACME setup
 
-- name: webserver | firewall | ensure port 31080/tcp is open on v6
+- name: webserver | firewall | ensure port 31080/tcp is open on v6 (loopback)
   iptables:
     ip_version: "ipv6"
-    chain: "{{ item.chain }}"
+    chain: "INPUT"
     protocol: tcp
+    source: "{{ ip6 }}"
     destination: "{{ ip6 }}"
-    destination_port: 31080
     jump: ACCEPT
-  loop:
-    - { chain: "INPUT" }
-    - { chain: "OUTPUT" }
+  notify:
+    - persist rules
+
+- name: webserver | firewall | ensure port 31080/tcp is open on v6 (accept SYN)
+  iptables:
+    ip_version: "ipv6"
+    chain: "INPUT"
+    protocol: tcp
+    source: "{{ ip6_other }}"
+    destination_port: "31080"
+    jump: ACCEPT
+  notify:
+    - persist rules
+
+- name: webserver | firewall | ensure port 31080/tcp is open on v6 (accept SYN/ACK)
+  iptables:
+    ip_version: "ipv6"
+    chain: "INPUT"
+    protocol: tcp
+    source: "{{ ip6_other }}"
+    source_port: "31080"
+    jump: ACCEPT
   notify:
     - persist rules
 
@@ -227,7 +246,7 @@
     chain: INPUT
     protocol: "{{ item.protocol }}"
     destination: "{{ item.ip }}"
-    destination_port: 53
+    destination_port: "53"
     jump: REJECT
   loop:
     - { version: "ipv4", protocol: "tcp", ip: "{{ ip4_vip_dns1 }}" }

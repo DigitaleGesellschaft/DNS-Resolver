@@ -55,13 +55,24 @@
     group: root
     mode: "0644"
 
-- name: lets encrypt | create tmp dir
+- name: lets encrypt | create acme well known dir
   file:
-    path: /var/run/acme/acme-challenge
+    path: /var/run/acme/acme-challenge/.well-known/acme-challenge
     state: directory
     owner: root
     group: root
     mode: "0755"
+
+# To test ACME endpoint functionality:
+# curl http://dns.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
+# curl http://dns1.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
+# curl http://dns2.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
+# returns either "this is host dns1" or "this is host dns2"
+- name: lets encrypt | create test file with hostname to verify acme endpoint
+  copy:
+    dest: "/var/run/acme/acme-challenge/.well-known/acme-challenge/check.txt"
+    content: |
+      "this is host {{ inventory_hostname }}"
 
 - name: lets encrypt | copy deploy hook
   copy:
