@@ -1,7 +1,6 @@
 # Staging
 
-This documents describes how one can set up two local resolvers based on our Ansible configuration in a virtual
-machines.
+This documents describes how one can set up two local resolvers based on our Ansible configuration in virtual machines.
 
 This setup uses [Linux Containers](https://linuxcontainers.org/) respectively the command `lxc`. But one can apply the
 Ansible config on any virtual Ubuntu system.
@@ -14,8 +13,7 @@ On your host install `lxc` by running:
 
 We do not keep sensitive information in this repository. Create these files:
 
-- In the `locl.yml` file the two systems `localdns1` and `localdns2` are referred. In order Ansible knows these host
-  systems they need to be in the SSH configuration `~/.ssh/config` file e.g.:
+- In the `locl.yml` file the two systems `localdns1` and `localdns2` are referred. In order Ansible knows these host systems they need to be in the SSH configuration `~/.ssh/config` file e.g.:
 
   ```
   host localdns1
@@ -29,9 +27,7 @@ We do not keep sensitive information in this repository. Create these files:
   Port <port>
   ```
 
-- Create a user to connect to. This might be your current user on your local machine. Create a file
-  in `configuration-files/roles/base/tasks/users/$USER.yml` with this content. Change `$USER` with your current
-  username.
+- Create a user to connect to. This might be your current user on your local machine. Create a file in `configuration-files/roles/base/tasks/users/$USER.yml` with this content. Change `$USER` with your current username.
 
   ```
   ---
@@ -55,10 +51,8 @@ We do not keep sensitive information in this repository. Create these files:
     key: "add your public key here within the quotes e.g. `cat .ssh/id_rsa.pub`"
   ```
 
-- Create an encrypted secret file for ansible secrets. Contains secrets and passphrases in key-values pairs and is
-  located in `configuration-files/group_vars/local/vault.yml`.
-  - Create a new encrypted file by running `ansible-vault create configuration-files/group_vars/local/vault.yml` and
-    add the following content (these are example secrets):
+- Create an encrypted secret file for ansible secrets. Contains secrets and passphrases in key-values pairs and is located in `configuration-files/group_vars/local/vault.yml`.
+  - Create a new encrypted file by running `ansible-vault create configuration-files/group_vars/local/vault.yml` and add the following content (these are example secrets):
     ```
     dnsdist_control_interface_key: "KZ0-+U?T"
     dnsdist_webserver_api_key: "K[F|8I9?"

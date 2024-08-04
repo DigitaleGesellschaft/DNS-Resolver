@@ -50,16 +50,14 @@ graph LR
 
 ### DNS Frontend
 
-The frontend accepts client connections, validates DNS queries and forward them to the backend for name resolution, if
-the cache does not already provide an answer.
+The frontend accepts client connections, validates DNS queries and forward them to the backend for name resolution, if the cache does not already provide an answer.
 
 - Handles TLS encryption and Let's Encrypt certificates
 - Enforce rate limits to increase availability for all users
 
 ### DNS Backend
 
-The backend is only reachable by the _dnsdist_ frontend. If the answer to a query is not already cached it is resolved
-by querying the global domain name system (DNS).
+The backend is only reachable by the _dnsdist_ frontend. If the answer to a query is not already cached it is resolved by querying the global domain name system (DNS).
 
 - Prefetching cache to reduced latency
 - DNSSEC validation
