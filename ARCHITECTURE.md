@@ -4,19 +4,7 @@
 
 High level architecture of the DNS resolver configuration:
 
-```mermaid
----
-title: Secure DNS Resolver Overview
----
-flowchart LR
-    dotClient(DoT Client) <-->|Encrypted| dnsdist(DNS Frontend)
-    dohClient(DoH Client) <-->|Encrypted| dnsdist
-    dnsClient(DNS Client) --x|Plain| dnsdist
-    subgraph server [Secure DNS Resolver]
-        dnsdist <--> unbound(DNS Backend)
-    end
-    unbound <-->|Plain| dnsSystem[(Global DNS)]
-```
+![Secure DNS resolver overview](assets/Secure-DNS-Resolver-Overview.png)
 
 ## Detailed Setup
 
