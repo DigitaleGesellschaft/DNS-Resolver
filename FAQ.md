@@ -40,3 +40,9 @@ This document covers frequently asked questions about our secure DNS resolver sy
 
 2. Do you support DNSCrypt?
    - No, currently not.
+
+## Common Problems
+
+1. Opening `https://dns.digitale-gesellschaft.ch/dns-query` in a web browser does not seem to work correctly.
+
+   - The above URI is not meant to be opened directly in a web browser. It is the DNS-over-HTTPS (DoH) destination URI configuration. Configure this URI in your DoH client to query our DNS resolvers. When opened via a web browser, it is intended to always return `Unable to parse the request`.
