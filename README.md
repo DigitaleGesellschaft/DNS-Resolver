@@ -4,7 +4,7 @@ Information, configuration files and _how tos_ about the public secure DNS resol
 
 The Digital Society Switzerland runs publicly available DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) DNS resolver systems.
 
-![Secure DNS resolver in a pig picture](assets/Secure-DNS-Resolver-Big-Picture-100p.png)
+![Secure DNS resolver overview](assets/Secure-DNS-Resolver-Overview.png)
 
 This repository contains:
 
