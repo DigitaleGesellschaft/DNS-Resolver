@@ -1,0 +1,13 @@
+---
+name: Verify Pull Request
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+
+jobs:
+  lint:
+    uses: ./.github/workflows/run-lint.yml
+
+  integration-test:
+    uses: ./.github/workflows/run-integration-test.yml

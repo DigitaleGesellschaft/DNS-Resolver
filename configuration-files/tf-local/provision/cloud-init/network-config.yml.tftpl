@@ -1,0 +1,20 @@
+network:
+  version: 2
+  ethernets:
+    enp1s0:
+      dhcp4: no
+      addresses:
+%{ for address in addresses ~}
+        - ${address}
+%{ endfor ~}
+      nameservers:
+        addresses:
+          - 9.9.9.9
+          - 2620:fe::fe
+        search: []
+      routes:
+        - to: default
+          via: ${gateway_ip4}
+        - on-link: true
+          to: ::/0
+          via: ${gateway_ip6}
