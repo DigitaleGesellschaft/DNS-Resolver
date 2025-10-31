@@ -1,10 +1,8 @@
-name: Verify project
+name: Run lint
 
+# yamllint disable-line rule:truthy
 on:
-  pull_request:
-    branches: ["main"]
-  push:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   verify:

@@ -1,0 +1,13 @@
+---
+name: Verify Manually
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: ./.github/workflows/run-lint.yml
+
+  integration-test:
+    uses: ./.github/workflows/run-integration-test.yml

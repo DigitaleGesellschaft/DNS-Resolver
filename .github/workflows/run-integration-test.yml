@@ -1,0 +1,52 @@
+---
+name: Run integration test
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_call:
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Override libvirt socket permissions
+        run: |
+          sudo install -o root -g root -m 0644 -D .github/workflow-templates/socket-perms.conf /etc/systemd/system/libvirtd.socket.d/socket-perms.conf
+
+      - name: Install libvirt
+        run: >-
+          sudo apt-get update &&
+          sudo apt-get install --yes
+          genisoimage
+          libvirt-clients
+          libvirt-daemon-system
+          qemu-kvm
+          xsltproc
+
+      - name: Setup Tofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      - name: Setup libvirt default storage pool
+        run: |
+          sudo install -o root -g root -m 0644 -D .github/workflow-templates/apparmor-libvirt-default-pool /etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-default-pool
+          sudo install -o root -g libvirt-qemu -m 0755 -d /var/lib/libvirt/images
+          virsh -c qemu:///system pool-create-as default dir --target /var/lib/libvirt/images
+
+      - name: Dump libvirt information
+        run: |
+          sudo virt-host-validate qemu
+          virsh -c qemu:///system pool-list --all
+          virsh -c qemu:///system net-list --all
+          stat /var/run/libvirt/libvirt-sock /var/lib/libvirt/images
+
+      - name: Run tofu
+        run: |
+          tofu init
+          tofu apply -auto-approve
+        working-directory: configuration-files/tf-local

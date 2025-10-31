@@ -1,0 +1,13 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - "qemu-guest-agent"
+runcmd:
+  - "/usr/bin/systemctl enable --now qemu-guest-agent"
+ssh_authorized_keys:
+  - "${ssh_public_key}"
+users:
+- default
+hostname: "${hostname}"
+manage_etc_hosts: true

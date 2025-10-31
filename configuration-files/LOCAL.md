@@ -65,7 +65,7 @@ We do not keep sensitive information in this repository. Create these files:
     statistics_password: "PBawJ~^Q"
     ```
 
-## Set up resolver
+## Set up resolver (LXC)
 
 1. Create two linux containers by running:
 
@@ -98,6 +98,27 @@ We do not keep sensitive information in this repository. Create these files:
    ```
 
 This is it.
+
+## Set up resolver (opentofu / libvirt / Qemu / KVM)
+
+* Install https://opentofu.org/
+  (Use [extrepo](https://manpages.debian.org/stable/extrepo/extrepo.1p.en.html) in Debian / Ubuntu)
+* Install `genisoimage`, `libvirt-clients`, `libvirt-daemon-system`, `qemu-kvm`, `xsltproc` packages
+* Add your user to `libvirt` and `libvirt-qemu` groups
+* Verify the installation:
+  ```
+  sudo virt-host-validate qemu
+  virsh -c qemu:///system pool-list --all
+  virsh -c qemu:///system net-list --all
+  stat /var/run/libvirt/libvirt-sock /var/lib/libvirt/images
+  ```
+* Change into `tf-local` directory
+* Create a file `terraform.tfvars` and specify an SSH public key:
+  ```
+  ssh_public_key = "ssh-ed25519 AAAAC3NzaC1..."
+  ```
+* Run `tofu plan` and `tofu apply`
+* Run `tofu destroy` in order to clean up VMs and images.
 
 ## Helpful commands
 
