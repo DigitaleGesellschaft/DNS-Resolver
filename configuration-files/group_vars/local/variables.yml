@@ -14,14 +14,14 @@ ip6_vrrp2: fd42:56b6:246b:67bc::126
 netmask4_vrrp1_cidr: 32
 netmask6_vrrp1_cidr: 128
 
-if_primary: eth0
+if_primary: "{{ ansible_default_ipv4.interface }}"
 ip4_dns1: 10.52.7.116
 ip6_dns1: fd42:56b6:246b:67bc::116
 ip4_dns2: 10.52.7.117
 ip6_dns2: fd42:56b6:246b:67bc::117
 netmask4_dns_cidr: 28
 netmask6_dns_cidr: 64
-dg4_dns: 185.95.216.113
+dg4_dns: 10.52.7.113
 dg6_dns: fe80::1
 
 host_public: dns
