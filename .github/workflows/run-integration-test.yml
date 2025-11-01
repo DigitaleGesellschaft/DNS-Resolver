@@ -49,13 +49,15 @@ jobs:
         run: |
           ssh-keygen -q -N "" -f ~/.ssh/id_ed25519 -t ed25519 -C "ephemeral-ci-test-key"
           install -m 0644 .github/workflow-templates/ssh.config ~/.ssh/config
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_ed25519
 
       - name: Run tofu
         run: |
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_ed25519
+          export TF_VAR_ssh_public_key=$(<~/.ssh/id_ed25519.pub)
           tofu init
-          TF_VAR_ssh_public_key=$(<~/.ssh/id_ed25519.pub) tofu apply -auto-approve
+          tofu apply -auto-approve
+          eval "$(ssh-agent -k)"
         working-directory: configuration-files/tf-local
 
       - name: Prepare ansible
