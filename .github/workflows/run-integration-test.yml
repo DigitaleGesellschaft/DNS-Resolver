@@ -45,8 +45,22 @@ jobs:
           virsh -c qemu:///system net-list --all
           stat /var/run/libvirt/libvirt-sock /var/lib/libvirt/images
 
+      - name: Generate SSH keypair and prepare SSH config
+        run: |
+          ssh-keygen -q -N "" -f ~/.ssh/id_ed25519 -t ed25519 -C "ephemeral-ci-test-key"
+          install -m 0644 .github/workflow-templates/ssh.config ~/.ssh/config
+
       - name: Run tofu
         run: |
           tofu init
-          tofu apply -auto-approve
+          TF_VAR_ssh_public_key=$(<~/.ssh/id_ed25519.pub) tofu apply -auto-approve
         working-directory: configuration-files/tf-local
+
+      - name: Prepare ansible
+        run: |
+          install -m 0644 .github/workflow-templates/ci-vault.yml configuration-files/group_vars/local/vault.yml
+
+      - name: Run ansible
+        run: |
+          ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 22' --tags 'ssh'
+          ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
