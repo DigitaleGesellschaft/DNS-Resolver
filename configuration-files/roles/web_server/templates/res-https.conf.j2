@@ -7,9 +7,6 @@ server {
   ssl_certificate {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem;
   ssl_certificate_key {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem;
 
-  # ssl_stapling is globaly configured in tls.conf
-  ssl_trusted_certificate {{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/chain.pem;
-
   add_header Strict-Transport-Security max-age=15768000;
 	
   # restrict HTTP verbs to only GET, POST and HEAD
