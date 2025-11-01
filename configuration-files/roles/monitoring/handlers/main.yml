@@ -1,7 +1,8 @@
 ---
 - name: restart munin
+  loop:
+    - "munin"
+    - "munin-node"
   service:
-    name:
-      - "munin"
-      - "munin-node"
+    name: "{{ item }}"
     state: restarted
