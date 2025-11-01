@@ -13,6 +13,9 @@
   community.crypto.openssl_privatekey:
     path: "{{ cert_path }}live/{{ item.name }}/privkey.pem"
     type: "{{ item.type }}"
+    # Match group and permissions with letsencrypt-deploy-hook
+    group: "_dnsdist"
+    mode: 0640
   loop:
     - { type: "DSA", name: "{{ name_intern }}.{{ domain }}.ecdsa" }
     - { type: "DSA", name: "{{ host_public}}.{{ domain }}.ecdsa" }
