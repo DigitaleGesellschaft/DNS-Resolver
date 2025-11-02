@@ -70,3 +70,19 @@ jobs:
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
           # Run playbook a second time to setup TLS services.
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
+
+      - name: Dump system logs
+        if: always()
+        run: |
+          mkdir system-logs
+          ssh -p 55022 localdns1 sudo tar -C /var/log -c . > system-logs/localdns1.tar
+          ssh -p 55022 localdns2 sudo tar -C /var/log -c . > system-logs/localdns2.tar
+
+      - name: Upload system logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: system-logs
+          path: system-logs
+          retention-days: 3
+          compression-level: 9
