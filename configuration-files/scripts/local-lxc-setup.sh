@@ -4,8 +4,8 @@ readonly container1Name="localdns1"
 readonly container2Name="localdns2"
 readonly container1IpV4="10.52.7.116"
 readonly container2IpV4="10.52.7.117"
-readonly container1IpV6="fd42:56b6:246b:67bc:58e8:cad7:b33:116"
-readonly container2IpV6="fd42:56b6:246b:67bc:58e8:cad7:b33:117"
+readonly container1IpV6="fd42:56b6:246b:67bc::116"
+readonly container2IpV6="fd42:56b6:246b:67bc::117"
 
 readonly containerOs="ubuntu:22.04"
 
