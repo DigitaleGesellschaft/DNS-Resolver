@@ -15,13 +15,11 @@
 # Load firewall connection tracking kernel modules and reconnect.
 
 - name: firewall | load kernel modules
-  register: firewall_kernel_modules
   modprobe:
     name: xt_conntrack
 
 - name: firewall | reset connection
   meta: reset_connection
-  when: firewall_kernel_modules is changed
 
 # Accessing the DNS resolver for administration purpose
 
