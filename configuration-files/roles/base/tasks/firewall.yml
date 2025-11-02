@@ -12,6 +12,17 @@
     name:
       - ufw
 
+# Load firewall connection tracking kernel modules and reconnect.
+
+- name: firewall | load kernel modules
+  register: firewall_kernel_modules
+  modprobe:
+    name: xt_conntrack
+
+- name: firewall | reset connection
+  meta: reset_connection
+  when: firewall_kernel_modules is changed
+
 # Accessing the DNS resolver for administration purpose
 
 - name: firewall | SSH | allow new incoming SYN packets on TCP port "{{ network_port_ssh }}" on v4 and v6
