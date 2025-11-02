@@ -68,3 +68,5 @@ jobs:
         run: |
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 22' --tags 'ssh'
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
+          # Run playbook a second time to setup TLS services.
+          ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
