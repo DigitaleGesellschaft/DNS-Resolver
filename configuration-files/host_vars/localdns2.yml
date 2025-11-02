@@ -3,9 +3,9 @@ name_public: localdns2
 name_intern: localres2
 name_other_public: localdns1
 name_other_intern: localres1
-ip4: "10.52.7.117"
-ip6: "fd42:56b6:246b:67bc:58e8:cad7:b33:117"
-ip4_other: "10.52.7.116"
-ip6_other: "fd42:56b6:246b:67bc:58e8:cad7:b33:116"
+ip4: "{{ ip4_dns2 }}"
+ip6: "{{ ip6_dns2 }}"
+ip4_other: "{{ ip4_dns1 }}"
+ip6_other: "{{ ip6_dns1 }}"
 vrrp_prio_42: 100
 vrrp_prio_43: 200
