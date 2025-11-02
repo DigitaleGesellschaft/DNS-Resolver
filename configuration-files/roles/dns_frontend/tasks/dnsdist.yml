@@ -9,11 +9,10 @@
     path: "{{ cert_path}}live/{{ host_public }}.{{ domain }}.ecdsa/"
   register: service_certificate
 
-- name: dnsdist | ensure dnsdist is started
-  service:
+- name: "dnsdist | ensure dnsdist is {{ not service_certificate.stat.exists | ternary('masked', 'not masked') }}"
+  systemd_service:
     name: dnsdist
-    state: started
-  when: service_certificate.stat.exists
+    masked: "{{ not service_certificate.stat.exists }}"
 
 - name: dnsdist | generate config file from template
   template:
@@ -25,3 +24,9 @@
   when: service_certificate.stat.exists
   notify:
     - restart dnsdist
+
+- name: dnsdist | ensure dnsdist is started
+  service:
+    name: dnsdist
+    state: started
+  when: service_certificate.stat.exists
