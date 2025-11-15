@@ -30,9 +30,9 @@ resource "libvirt_cloudinit_disk" "ci" {
 }
 
 resource "libvirt_volume" "base" {
-  name   = "jammy-server-cloudimg-amd64.img"
+  name   = "noble-server-cloudimg-amd64.img"
   pool   = var.libvirt_pool_name
-  source = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 }
 
 resource "libvirt_network" "local" {
