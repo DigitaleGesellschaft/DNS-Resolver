@@ -34,7 +34,7 @@ init_container() {
 
     echo "Temporarily allow SSH password authentication"
     sudo lxc exec "$1" -- sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config > /dev/null
-    sudo lxc exec "$1" -- systemctl restart sshd > /dev/null
+    sudo lxc exec "$1" -- systemctl restart ssh > /dev/null
 
     echo "Copy public SSH key (~/.ssh/id_rsa) to container '$1'"
     ssh-copy-id -p 22 -i ~/.ssh/id_rsa "$4@$1" > /dev/null
@@ -42,7 +42,7 @@ init_container() {
     echo "Disable SSH password authentication"
     sudo lxc exec "$1" -- sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config > /dev/null
     sudo lxc exec "$1" -- sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config > /dev/null
-    sudo lxc exec "$1" -- systemctl restart sshd > /dev/null
+    sudo lxc exec "$1" -- systemctl restart ssh > /dev/null
 }
 
 start_container() {

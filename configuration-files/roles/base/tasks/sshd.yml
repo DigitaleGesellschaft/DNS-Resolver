@@ -1,4 +1,40 @@
 ---
+# The result of this call is used to suppress the ssh.socket handler on older
+# ubuntu releases where the socket unit is not present. Note that the drop-in
+# is installed regardless of the result here. This is done to ensure ssh will
+# start on the correct port after a dist-upgrade.
+- name: ssh | check if systemd ssh.socket unit is active
+  changed_when: false
+  failed_when: false
+  register: ssh_socket_is_active
+  command:
+    argv:
+      - /usr/bin/systemctl
+      - is-active
+      - ssh.socket
+
+- name: ssh | systemd ssh.socket unit drop-in directory present
+  file:
+    state: directory
+    path: /etc/systemd/system/ssh.socket.d
+    owner: root
+    group: root
+    mode: 0755
+
+- name: ssh | systemd ssh.socket unit drop-in present
+  notify:
+    - restart ssh.socket
+  copy:
+    content: |
+      [Socket]
+      ListenStream=
+      ListenStream=0.0.0.0:{{ network_port_ssh }}
+      ListenStream=[::]:{{ network_port_ssh }}
+    dest: /etc/systemd/system/ssh.socket.d/50-port.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: ssh | configure sshd
   lineinfile:
     path: "/etc/ssh/sshd_config"
@@ -18,4 +54,4 @@
     - { key: "Port", value: "{{ network_port_ssh }}" } # use custom listening port
     - { key: "X11Forwarding", value: "no" } # disable unused X11 forwarding, console access only
   notify:
-    - restart sshd
+    - restart ssh
