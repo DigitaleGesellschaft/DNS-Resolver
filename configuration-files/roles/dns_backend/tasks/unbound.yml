@@ -17,6 +17,12 @@
     name: unbound
     state: started
 
+- name: unbound | control key present
+  command:
+    argv:
+      - /usr/sbin/unbound-control-setup
+    creates: /etc/unbound/unbound_server.pem
+
 - name: unbound | generate config file from template
   template:
     src: unbound.conf.j2
