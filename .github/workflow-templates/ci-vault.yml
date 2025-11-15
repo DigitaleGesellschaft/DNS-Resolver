@@ -1,9 +1,10 @@
-dnsdist_control_interface_key: "KZ0-+U?T"
+dnsdist_control_interface_key: "G5t9FVaMWnceS9HCP7iNvvFdGnpycAOSJC4IUsG+wAc="
 dnsdist_webserver_api_key: "K[F|8I9?"
 dnsdist_webserver_password: "Lj9*kN?Z"
-keepalived_dns42_4: "tT,'f'?R"
-keepalived_dns42_6: "1}[&Is>x"
-keepalived_dns43_4: "`B<VDz?p"
-keepalived_dns43_6: "3+=rnF8="
+keepalived_dns42_4: "1SnPGKPN"
+keepalived_dns42_6: "MFeB28vQ"
+keepalived_dns43_4: "kXgQjHd0"
+keepalived_dns43_6: "iQyJoap8"
 statisitcs_user: statisticsUser
-statistics_password: "PBawJ~^Q"
+# Clear text: PBawJ~^Q
+statistics_password: "$apr1$wAB.Z/Nr$IaIvFkePXLFd6U2e/jvVG/"
