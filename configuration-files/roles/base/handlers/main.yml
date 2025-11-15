@@ -1,7 +1,14 @@
 ---
-- name: restart sshd
+- name: restart ssh.socket
+  when: ssh_socket_is_active.rc == 0
+  systemd_service:
+    name: ssh.socket
+    state: restarted
+    daemon_reload: true
+
+- name: restart ssh
   service:
-    name: sshd
+    name: ssh
     state: restarted
 
 - name: persist rules
