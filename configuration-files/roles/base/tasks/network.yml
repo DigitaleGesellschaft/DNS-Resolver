@@ -1,4 +1,17 @@
 ---
+- name: Disable IPv6 duplicate address detection
+  loop:
+    - all
+    - default
+    - "{{ if_primary }}"
+  sysctl:
+    name: "net.ipv6.conf.{{ item }}.accept_dad"
+    value: '0'
+    sysctl_set: true
+    sysctl_file: /etc/sysctl.d/99-disable-dad-ipv6.conf
+    state: present
+    reload: true
+
 - name: Generate network config file from template
   template:
     src: 00-installer-config.yaml.j2
