@@ -79,7 +79,7 @@ getPool(""):setCache(pc)
 addTLSLocal( "{{ interf }}",
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
-             { doTCP = true, exactPathMatching = true, minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
+             { minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
            )
 {% endfor %}
 {% endfor %}
@@ -91,7 +91,7 @@ addDOHLocal( "{{ interf }}",
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
              { "/", "/dns-query" },
-             { doTCP = true, exactPathMatching = true, minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
+             { minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
            )
 {% endfor %}
 {% endfor %}
