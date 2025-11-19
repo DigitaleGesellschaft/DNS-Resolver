@@ -2,9 +2,11 @@
 
 > :warning: **Für Experten** :warning:
 >
-> Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach installiert werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
+> Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach
+> installiert werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
 
-Der DNS-Resolver des Turris Omnia Router, kresd, kann per SSH auch für DoT konfiguriert werden. Die folgende Anleitung für DoT via die DNS-Server der Digitalen Gesellschaft sollte auch allgemein für OpenWRT basierte Geräte funktionieren.
+Der DNS-Resolver des Turris Omnia Router, kresd, kann per SSH auch für DoT konfiguriert werden. Die folgende Anleitung
+für DoT via die DNS-Server der Digitalen Gesellschaft sollte auch allgemein für OpenWRT basierte Geräte funktionieren.
 
 1. Konfigurationsdatei erstellen.
 
