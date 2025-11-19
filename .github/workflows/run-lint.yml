@@ -12,5 +12,8 @@ jobs:
       - name: Check out project
         uses: actions/checkout@v4
 
-      - name: Check .editorconfig compliance
+      - name: Install editorconfig-checker
         uses: editorconfig-checker/action-editorconfig-checker@v2
+
+      - name: Check .editorconfig compliance
+        run: editorconfig-checker
