@@ -21,9 +21,12 @@ on a way to achieve your idea.
 
 ## How to Contribute
 
-1. Fork the [DNS resolver repository](https://github.com/DigitaleGesellschaft/DNS-Resolver) to your own name space. For this, you need a GitHub account.
-2. For small changes you may use the GitHub web editor to directly fix a document. For larger changes you need to check out your fork of the _DNS resolver_ repository.
-3. Make your changes locally and commit them. For commit messages try to use existing commit messages as a guide. If your commit fixes or addresses an existing issue, please reference the issue number in your commit message.
+1. Fork the [DNS resolver repository](https://github.com/DigitaleGesellschaft/DNS-Resolver) to your own name space. For
+   this, you need a GitHub account.
+2. For small changes you may use the GitHub web editor to directly fix a document. For larger changes you need to check
+   out your fork of the _DNS resolver_ repository.
+3. Make your changes locally and commit them. For commit messages try to use existing commit messages as a guide. If
+   your commit fixes or addresses an existing issue, please reference the issue number in your commit message.
 4. Create a pull request (PR) to our _main_ branch.
 
 Example commit message:
