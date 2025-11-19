@@ -10,9 +10,7 @@ jobs:
 
     steps:
       - name: Check out project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Check project formating
-        uses: creyD/prettier_action@v4.3
-        with:
-          prettier_options: --check .
+      - name: Check .editorconfig compliance
+        uses: editorconfig-checker/action-editorconfig-checker@v2
