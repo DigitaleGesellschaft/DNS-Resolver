@@ -4,4 +4,4 @@ Pin-Priority: 1
 
 Package: dnsdist*
 Pin: origin repo.powerdns.com
-Pin-Priority: 600
+Pin-Priority: 1000
