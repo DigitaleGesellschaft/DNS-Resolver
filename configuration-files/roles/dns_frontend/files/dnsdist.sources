@@ -1,0 +1,6 @@
+Uris: https://repo.powerdns.com/ubuntu
+Components: main
+Types: deb
+Architectures: amd64
+Suites: noble-dnsdist-20
+Signed-By: /etc/apt/keyrings/FD380FBB-pub.asc
