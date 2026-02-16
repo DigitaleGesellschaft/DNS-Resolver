@@ -95,24 +95,24 @@
   when:
     not pub_rsa_check.stat.exists
 
-    #
-    #- name: Create full chain files
-    #  copy:
-    #    src: "{{ item.src }}"
-    #    dest: "{{ item.dest }}"
-    #    # path: "{{ cert_path }}live/{{ item.name }}"
-    #    # state: touch
-    #    # mode: "0755"
-    #  loop:
-    #    - {
-    #        src: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/cert.pem",
-    #        dest: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem",
-    #      }
-    #    - {
-    #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/cert.pem",
-    #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/fullchain.pem",
-    #      }
-    #    - {
-    #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/cert.pem",
-    #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/fullchain.pem",
-    #      }
+  #
+  #- name: Create full chain files
+  #  copy:
+  #    src: "{{ item.src }}"
+  #    dest: "{{ item.dest }}"
+  #    # path: "{{ cert_path }}live/{{ item.name }}"
+  #    # state: touch
+  #    # mode: "0755"
+  #  loop:
+  #    - {
+  #        src: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/cert.pem",
+  #        dest: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem",
+  #      }
+  #    - {
+  #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/cert.pem",
+  #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/fullchain.pem",
+  #      }
+  #    - {
+  #        src: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/cert.pem",
+  #        dest: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/fullchain.pem",
+  #      }
