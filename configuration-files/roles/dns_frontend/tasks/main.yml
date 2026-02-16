@@ -2,4 +2,5 @@
 - name: Setup DNS Frontend
   tags: frontend
   block:
+    - import_tasks: powerdns-repo.yml
     - import_tasks: dnsdist.yml

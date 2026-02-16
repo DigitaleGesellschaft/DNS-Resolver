@@ -1,0 +1,28 @@
+---
+- name: powerdns-repo | pinning
+  copy:
+    src: dnsdist.pref
+    dest: /etc/apt/preferences.d/dnsdist.pref
+    owner: root
+    group: root
+    mode: 0644
+
+- name: powerdns-repo | keyring
+  copy:
+    src: FD380FBB-pub.asc
+    dest: /etc/apt/keyrings/FD380FBB-pub.asc
+    owner: root
+    group: root
+    mode: 0644
+
+- name: powerdns-repo | sources
+  copy:
+    src: dnsdist.sources
+    dest: /etc/apt/sources.list.d
+    owner: root
+    group: root
+    mode: 0644
+
+- name: powerdns-repo | apt cache up-to-date
+  apt:
+    update_cache: true
