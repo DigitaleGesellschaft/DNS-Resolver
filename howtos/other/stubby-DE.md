@@ -2,9 +2,11 @@
 
 ## Experten
 
-Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach installiert werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
+Diese Konfigurationsvorschläge richten sich an sehr erfahrene Personen. Es muss zum Teil Drittsoftware nach installiert
+werden oder Einstellungen in den Konfigurationsdateien angepasst werden.
 
-Stubby ist ein Stubs Resolver Daemon, welcher DoT unterstützt. Anleitungen für verschiedene Betriebssysteme gibt es [hier](https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Daemon+-+Stubby).
+Stubby ist ein Stubs Resolver Daemon, welcher DoT unterstützt. Anleitungen für verschiedene Betriebssysteme gibt
+es [hier](https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Daemon+-+Stubby).
 
 In Konfigurationsdatei /etc/stubby/stubby.yml hinzufügen um DoT im Strict-Mode zu verwenden:
 
