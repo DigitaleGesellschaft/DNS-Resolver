@@ -226,15 +226,15 @@
   iptables:
     ip_version: "{{ item.version }}"
     chain: INPUT
-    protocol: "{{ item.protocol }}"
+    protocol: "{{ item.proto }}"
     destination: "{{ item.ip }}"
     destination_port: "53"
     jump: REJECT
-  loop:
-    - { version: "ipv4", protocol: "tcp", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", protocol: "udp", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", protocol: "tcp", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", protocol: "udp", ip: "{{ ip6_vip_dns2 }}" }
+  vars:
+    protocols:
+      - { proto: "tcp" }
+      - { proto: "udp" }
+  loop: "{{ dns_vip_addresses | product(protocols) | map('combine') | list }}"
   notify:
     - persist rules
 
