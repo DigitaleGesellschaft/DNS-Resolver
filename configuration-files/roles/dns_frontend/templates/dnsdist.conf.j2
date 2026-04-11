@@ -84,6 +84,17 @@ addTLSLocal( "{{ interf }}",
 {% endfor %}
 {% endfor %}
 
+-- DoQ Frontend
+{% for interf in vip_interfaces %}
+{% for i in range(dnsdist_nof_thread_doq_per_ip) %}
+addDOQLocal( "{{ interf }}",
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
+             { reusePort = true }
+           )
+{% endfor %}
+{% endfor %}
+
 -- DoH Frontend
 {% for interf in vip_interfaces %}
 {% for i in range(dnsdist_nof_thread_doh_per_ip) %}
@@ -91,7 +102,7 @@ addDOHLocal( "{{ interf }}",
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
              { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
              { "/", "/dns-query" },
-             { minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50 }
+             { minTLSVersion = "tls1.2", preferServerCiphers = true, reusePort = true, tcpFastOpenQueueSize = 50, customResponseHeaders = {["alt-svc"]='h3=":443"'} }
            )
 {% endfor %}
 {% endfor %}

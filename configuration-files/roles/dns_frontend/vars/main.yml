@@ -6,6 +6,7 @@ vip_interfaces:
   - "{{ ip6_vip_dns2 }}"
 
 dnsdist_nof_thread_dot_per_ip: 3
+dnsdist_nof_thread_doq_per_ip: 3
 dnsdist_nof_thread_doh_per_ip: 3
 dnsdist_nof_thread_doh3_per_ip: 3
 
