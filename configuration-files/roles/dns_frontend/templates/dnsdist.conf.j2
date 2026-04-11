@@ -96,6 +96,16 @@ addDOHLocal( "{{ interf }}",
 {% endfor %}
 {% endfor %}
 
+-- DoH3 Fronted
+{% for interf in vip_interfaces %}
+{% for i in range(dnsdist_nof_thread_doh3_per_ip) %}
+addDOH3Local( "{{ interf }}",
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem", "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem" },
+             { "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem",   "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"   },
+             { preferServerCiphers = true, reusePort = true }
+           )
+{% endfor %}
+{% endfor %}
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- Upstream DNS resolver (unbound)
