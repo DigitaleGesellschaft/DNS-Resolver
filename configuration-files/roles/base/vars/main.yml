@@ -1,2 +1,14 @@
 ---
 network_port_ssh: 55022
+
+dns_vip_addresses:
+  - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
+  - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
+  - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
+  - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+dns_service_ports:
+  - { proto: "tcp", port: "80" }
+  - { proto: "tcp", port: "443" }
+  - { proto: "tcp", port: "853" }
+  - { proto: "udp", port: "443" }
+  - { proto: "udp", port: "853" }

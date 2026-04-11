@@ -166,86 +166,59 @@
 
 # DoT / DoH - communication between clients and the DNS resolver
 
-- name: firewall | DoH/DoT | explicitly allow DNS server to receive queries from clients on port 80/tcp, 443/tcp and 853/tcp
+- name: firewall | DoH/DoH3/DoT/DoQ | explicitly allow DNS server to receive queries from clients
   iptables:
     ip_version: "{{ item.version }}"
     chain: INPUT
-    protocol: tcp
+    protocol: "{{ item.proto }}"
     destination: "{{ item.ip }}"
-    destination_ports:
-      - "80"
-      - "443"
-      - "853"
+    destination_port: "{{ item.port }}"
     jump: ACCEPT
-  loop:
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+  loop: "{{ dns_vip_addresses | product(dns_service_ports) | map('combine') | list }}"
   notify:
     - persist rules
 
-- name: firewall | DoH/DoT NOTRACK | disable connection tracking on queries from clients
+- name: firewall | DoH/DoH3/DoT/DoQ NOTRACK | disable connection tracking on queries from clients
   iptables:
     ip_version: "{{ item.version }}"
     table: raw
     chain: PREROUTING
-    protocol: tcp
+    protocol: "{{ item.proto }}"
     destination: "{{ item.ip }}"
     jump: NOTRACK
-  loop:
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+  vars:
+    protocols:
+      - { proto: "tcp" }
+      - { proto: "udp" }
+  loop: "{{ dns_vip_addresses | product(protocols) | map('combine') | list }}"
   notify:
     - persist rules
 
-- name: firewall | DoH/DoT | explicitly allow DNS server to answer clients on port 80/tcp, 443/tcp and 853/tcp
+- name: firewall | DoH/DoH3/DoT/DoQ | explicitly allow DNS server to answer clients on port 80/tcp, 443/tcp_udp and 853/tcp_udp
   iptables:
     ip_version: "{{ item.version }}"
     chain: OUTPUT
-    protocol: tcp
+    protocol: "{{ item.proto }}"
     source: "{{ item.ip }}"
     source_port: "{{ item.port }}"
     jump: ACCEPT
-  loop:
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "80" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "80" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "80" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "80" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "443" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "443" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "443" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "443" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}", port: "853" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}", port: "853" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}", port: "853" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}", port: "853" }
+  loop: "{{ dns_vip_addresses | product(dns_service_ports) | map('combine') | list }}"
   notify:
     - persist rules
 
-- name: firewall | DoH/DoT NOTRACK | disable connection tracking on responses to clients
+- name: firewall | DoH/DoH3/DoT/DoQ NOTRACK | disable connection tracking on responses to clients
   iptables:
     ip_version: "{{ item.version }}"
     table: raw
     chain: OUTPUT
-    protocol: tcp
+    protocol: "{{ item.proto }}"
     source: "{{ item.ip }}"
     jump: NOTRACK
-  loop:
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", ip: "{{ ip6_vip_dns2 }}" }
+  vars:
+    protocols:
+      - { proto: "tcp" }
+      - { proto: "udp" }
+  loop: "{{ dns_vip_addresses | product(protocols) | map('combine') | list }}"
   notify:
     - persist rules
 
@@ -253,15 +226,15 @@
   iptables:
     ip_version: "{{ item.version }}"
     chain: INPUT
-    protocol: "{{ item.protocol }}"
+    protocol: "{{ item.proto }}"
     destination: "{{ item.ip }}"
     destination_port: "53"
     jump: REJECT
-  loop:
-    - { version: "ipv4", protocol: "tcp", ip: "{{ ip4_vip_dns1 }}" }
-    - { version: "ipv4", protocol: "udp", ip: "{{ ip4_vip_dns2 }}" }
-    - { version: "ipv6", protocol: "tcp", ip: "{{ ip6_vip_dns1 }}" }
-    - { version: "ipv6", protocol: "udp", ip: "{{ ip6_vip_dns2 }}" }
+  vars:
+    protocols:
+      - { proto: "tcp" }
+      - { proto: "udp" }
+  loop: "{{ dns_vip_addresses | product(protocols) | map('combine') | list }}"
   notify:
     - persist rules
 
