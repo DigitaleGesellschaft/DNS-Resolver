@@ -9,16 +9,17 @@
     - { name: "{{ host_public}}.{{ domain }}.ecdsa" }
     - { name: "{{ host_public}}.{{ domain }}.rsa" }
 
-- name: Create private DSA key (without passphrase)
+- name: Create private keys (without passphrase)
   community.crypto.openssl_privatekey:
     path: "{{ cert_path }}live/{{ item.name }}/privkey.pem"
     type: "{{ item.type }}"
+    curve: "{{ item.curve | default(omit) }}"
     # Match group and permissions with letsencrypt-deploy-hook
     group: "_dnsdist"
     mode: 0640
   loop:
-    - { type: "DSA", name: "{{ name_intern }}.{{ domain }}.ecdsa" }
-    - { type: "DSA", name: "{{ host_public}}.{{ domain }}.ecdsa" }
+    - { type: "ECC", curve: "secp256r1", name: "{{ name_intern }}.{{ domain }}.ecdsa" }
+    - { type: "ECC", curve: "secp256r1", name: "{{ host_public}}.{{ domain }}.ecdsa" }
     - { type: "RSA", name: "{{ host_public}}.{{ domain }}.rsa" }
 
 - name: Check if RSA public PEM certificate file exists
@@ -26,12 +27,12 @@
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
   register: pub_rsa_check
 
-- name: Check if DSA public PEM certificate file exists
+- name: Check if ECDSA public PEM certificate file exists
   stat:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
   register: pub_ecdsa_check
 
-- name: Check if DSA intern PEM certificate file exists
+- name: Check if ECDSA intern PEM certificate file exists
   stat:
     path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem"
   register: int_ecdsa_check
@@ -46,7 +47,7 @@
       - "DNS:{{ name_public }}.{{ domain }}"
       - "DNS:{{ name_other_public }}.{{ domain }}"
   register: csr
-  when: not pub_rsa_check.stat.exists
+  when: not pub_ecdsa_check.stat.exists
 
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
@@ -54,7 +55,7 @@
     csr_content: "{{ csr.csr }}"
     privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/privkey.pem"
     provider: selfsigned
-  when: not pub_rsa_check.stat.exists
+  when: not pub_ecdsa_check.stat.exists
 
 - name: Create public RSA certificate signing request (CSR)
   community.crypto.openssl_csr_pipe:
@@ -92,8 +93,7 @@
     csr_content: "{{ csr.csr }}"
     privatekey_path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem"
     provider: selfsigned
-  when:
-    not pub_rsa_check.stat.exists
+  when: not int_ecdsa_check.stat.exists
 
     #
     #- name: Create full chain files
