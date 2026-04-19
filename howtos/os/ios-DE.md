@@ -1,6 +1,8 @@
 # iOS mit DoT oder DoH
 
-Seit iOS 14 oder macOS 11 unterstützen Apple-Geräte das Setzen der System-weiten DNS Server via Profile. Dabei sind unserer Profile so definiert, dass sie sämtliche DNS Anfrage unabhängig vom Netzwerk (WiFi oder mobiles Netz) und verschlüsselt an unsere DNS Server leiten.
+Seit iOS 14 oder macOS 11 unterstützen Apple-Geräte das Setzen der System-weiten DNS Server via Profile. Dabei sind
+unserer Profile so definiert, dass sie sämtliche DNS Anfrage unabhängig vom Netzwerk (WiFi oder mobiles Netz) und
+verschlüsselt an unsere DNS Server leiten.
 
 - [DNS over TLS (DoT)](conf/digiges-dns-tls.mobileconfig)
 - [DNS over HTTPS (DoH)](conf/digiges-dns-https.mobileconfig)
@@ -19,7 +21,8 @@ Seit iOS 14 oder macOS 11 unterstützen Apple-Geräte das Setzen der System-weit
 
 ## Alternative via DNSCloak App
 
-Die App [DNSCloak](https://apps.apple.com/us/app/dnscloak-secure-dns-client/id1452162351) bietet DoH für Apple iOS-Geräte an. Unsere Server sind in den Standardeinstellungen zu finden.
+Die App [DNSCloak](https://apps.apple.com/us/app/dnscloak-secure-dns-client/id1452162351) bietet DoH für Apple
+iOS-Geräte an. Unsere Server sind in den Standardeinstellungen zu finden.
 
 1. Lade die App herunter und installiere sie
 2. Suche in der Serversuche nach _Digitale_
