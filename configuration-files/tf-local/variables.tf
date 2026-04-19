@@ -56,11 +56,19 @@ variable "libvirt_network_routes" {
   default = [
     {
       cidr    = "10.52.7.42/32"
-      gateway = "10.52.7.113"
+      gateway = "10.52.7.125"
     },
     {
       cidr    = "10.52.7.43/32",
-      gateway = "10.52.7.113"
+      gateway = "10.52.7.126"
+    },
+    {
+      cidr    = "fd42:56b6:246b:67bc::42/128"
+      gateway = "fd42:56b6:246b:67bc::125"
+    },
+    {
+      cidr    = "fd42:56b6:246b:67bc::43/128",
+      gateway = "fd42:56b6:246b:67bc::126"
     }
   ]
 }
