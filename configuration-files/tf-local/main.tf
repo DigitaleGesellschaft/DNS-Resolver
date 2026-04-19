@@ -41,6 +41,14 @@ resource "libvirt_network" "local" {
   mode      = "nat"
   domain    = "${var.libvirt_network_name}.local"
   addresses = var.libvirt_network_subnets
+  dynamic "routes" {
+    for_each = var.libvirt_network_routes
+    iterator = route
+    content {
+      cidr    = route.value["cidr"]
+      gateway = route.value["gateway"]
+    }
+  }
   xml {
     xslt = file("${path.module}/libvirt-network.xsl")
   }

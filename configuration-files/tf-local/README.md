@@ -33,6 +33,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_libvirt_connect_uri"></a> [libvirt\_connect\_uri](#input\_libvirt\_connect\_uri) | Connect string for libvirt. | `string` | `"qemu:///system"` | no |
 | <a name="input_libvirt_network_name"></a> [libvirt\_network\_name](#input\_libvirt\_network\_name) | Network to connect the libvirt node to. | `string` | `"localdns"` | no |
+| <a name="input_libvirt_network_routes"></a> [libvirt\_network\_routes](#input\_libvirt\_network\_routes) | n/a | `list(object({ cidr = string, gateway = string }))` | <pre>[<br/>  {<br/>    "cidr": "10.52.7.42/32",<br/>    "gateway": "10.52.7.113"<br/>  },<br/>  {<br/>    "cidr": "10.52.7.43/32",<br/>    "gateway": "10.52.7.113"<br/>  }<br/>]</pre> | no |
 | <a name="input_libvirt_network_subnets"></a> [libvirt\_network\_subnets](#input\_libvirt\_network\_subnets) | Subnets for of libvirt network. | `list(string)` | <pre>[<br/>  "10.52.7.112/28",<br/>  "fd42:56b6:246b:67bc::/64"<br/>]</pre> | no |
 | <a name="input_libvirt_pool_name"></a> [libvirt\_pool\_name](#input\_libvirt\_pool\_name) | Storage pool to use for libvirt images. | `string` | `"default"` | no |
 | <a name="input_nodes"></a> [nodes](#input\_nodes) | n/a | `list(string)` | <pre>[<br/>  "localdns1",<br/>  "localdns2"<br/>]</pre> | no |
