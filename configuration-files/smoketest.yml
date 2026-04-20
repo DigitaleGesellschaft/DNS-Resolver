@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: false
+  gather_facts: no
+  tasks:
+    - loop:
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+tls"]
+      delegate_to: 127.0.0.1
+      changed_when: false
+      register: smoketest_dig
+      command:
+        argv: "{{ item }}"
+
+    - loop: "{{ smoketest_dig.results }}"
+      when: not item['stdout'].startswith('"hello world" from server')
+      fail:

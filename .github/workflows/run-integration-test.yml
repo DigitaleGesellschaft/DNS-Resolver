@@ -71,6 +71,9 @@ jobs:
           # Run playbook a second time to setup TLS services.
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
 
+      - name: Run smoketest
+          ansible-playbook configuration-files/smoketest.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
+
       - name: Dump system logs
         if: always()
         run: |
