@@ -4,6 +4,17 @@
   gather_facts: no
   tasks:
     - loop:
+        - { host: "{{ ip6_vip_dns2 }}", port: 853 }
+        - { host: "{{ ip6_vip_dns1 }}", port: 853 }
+        - { host: "{{ ip4_vip_dns2 }}", port: 443 }
+        - { host: "{{ ip4_vip_dns1 }}", port: 443 }
+      delegate_to: 127.0.0.1
+      changed_when: false
+      wait_for:
+        host: "{{ item['host'] }}"
+        port: "{{ item['port'] }}"
+
+    - loop:
         - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
         - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+tls"]
         - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+short", "+identify", "+https"]
