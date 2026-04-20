@@ -15,8 +15,8 @@
         - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
-      retries: 2
-      delay: 3
+      retries: 3
+      delay: 5
       register: smoketest_dig
       until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world" from server')
       changed_when: false
