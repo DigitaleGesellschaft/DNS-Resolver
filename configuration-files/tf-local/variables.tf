@@ -4,7 +4,7 @@ variable "nodes" {
 }
 
 variable "nodes_addresses" {
-  type    = list(list(string))
+  type = list(list(string))
   default = [
     ["10.52.7.116/28", "fd42:56b6:246b:67bc::116/64"],
     ["10.52.7.117/28", "fd42:56b6:246b:67bc::117/64"]
@@ -49,6 +49,28 @@ variable "libvirt_network_subnets" {
   type        = list(string)
   default     = ["10.52.7.112/28", "fd42:56b6:246b:67bc::/64"]
   description = "Subnets for of libvirt network."
+}
+
+variable "libvirt_network_routes" {
+  type = list(object({ cidr = string, gateway = string }))
+  default = [
+    {
+      cidr    = "10.52.7.42/32"
+      gateway = "10.52.7.125"
+    },
+    {
+      cidr    = "10.52.7.43/32",
+      gateway = "10.52.7.126"
+    },
+    {
+      cidr    = "fd42:56b6:246b:67bc::42/128"
+      gateway = "fd42:56b6:246b:67bc::125"
+    },
+    {
+      cidr    = "fd42:56b6:246b:67bc::43/128",
+      gateway = "fd42:56b6:246b:67bc::126"
+    }
+  ]
 }
 
 variable "libvirt_pool_name" {
