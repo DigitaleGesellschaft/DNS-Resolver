@@ -15,10 +15,63 @@
         - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
+      changed_when: false
       retries: 7
       delay: 7
       register: smoketest_dig
       until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world" from server')
+      command:
+        argv: "{{ item }}"
+
+    - name: "Smoketest | testssl | async"
+      loop:
+        - ["/usr/bin/podman", "run", "--rm", "--userns=keep-id", "--volume=./../.github/workflow-fixtures/testssl-results:/testssl-results", "docker.io/drwetter/testssl.sh", "--categories", "--forward-secrecy", "--protocols", "--server-preference", "--client-simulation", "--grease", "--vulnerabilities", "--overwrite", "--csvfile", "/testssl-results/{{ ip4_vip_dns1 }}_p443.csv", "--ip", "{{ ip4_vip_dns1 }}", "dns.digitale-gesellschaft.ch:443" ]
+        - ["/usr/bin/podman", "run", "--rm", "--userns=keep-id", "--volume=./../.github/workflow-fixtures/testssl-results:/testssl-results", "docker.io/drwetter/testssl.sh", "--categories", "--forward-secrecy", "--protocols", "--server-preference", "--client-simulation", "--grease", "--vulnerabilities", "--overwrite", "--csvfile", "/testssl-results/{{ ip4_vip_dns1 }}_p853.csv", "--ip", "{{ ip4_vip_dns1 }}", "dns.digitale-gesellschaft.ch:853" ]
+        - ["/usr/bin/podman", "run", "--rm", "--userns=keep-id", "--volume=./../.github/workflow-fixtures/testssl-results:/testssl-results", "docker.io/drwetter/testssl.sh", "--categories", "--forward-secrecy", "--protocols", "--server-preference", "--client-simulation", "--grease", "--vulnerabilities", "--overwrite", "--csvfile", "/testssl-results/{{ ip4_vip_dns2 }}_p443.csv", "--ip", "{{ ip4_vip_dns2 }}", "dns.digitale-gesellschaft.ch:443" ]
+        - ["/usr/bin/podman", "run", "--rm", "--userns=keep-id", "--volume=./../.github/workflow-fixtures/testssl-results:/testssl-results", "docker.io/drwetter/testssl.sh", "--categories", "--forward-secrecy", "--protocols", "--server-preference", "--client-simulation", "--grease", "--vulnerabilities", "--overwrite", "--csvfile", "/testssl-results/{{ ip4_vip_dns2 }}_p853.csv", "--ip", "{{ ip4_vip_dns2 }}", "dns.digitale-gesellschaft.ch:853" ]
+      delegate_to: 127.0.0.1
+      when: ip4 == ip4_dns1
+      changed_when: false
+      async: 300
+      poll: 0
+      register: smoketest_testssl
+      command:
+        argv: "{{ item }}"
+
+    - name: "Smoketest | testssl | poll"
+      loop: "{{ smoketest_testssl.results }}"
+      loop_control:
+        loop_var: "async_result_item"
+      delegate_to: 127.0.0.1
+      when: ip4 == ip4_dns1
+      changed_when: false
+      register: async_poll_results
+      until: async_poll_results is finished
+      failed_when: "async_poll_results.rc > 200"
+      retries: 300
+      async_status:
+        jid: "{{ async_result_item.ansible_job_id }}"
+
+    - name: "Smoketest | testssl | cleanup"
+      loop:
+        - ["/usr/bin/sed", "-i", "/DROWN_hint/d", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns1 }}_p443.csv" ]
+        - ["/usr/bin/sed", "-i", "/DROWN_hint/d", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns1 }}_p853.csv" ]
+        - ["/usr/bin/sed", "-i", "/DROWN_hint/d", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns2 }}_p443.csv" ]
+        - ["/usr/bin/sed", "-i", "/DROWN_hint/d", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns2 }}_p853.csv" ]
+      delegate_to: 127.0.0.1
+      when: ip4 == ip4_dns1
+      changed_when: false
+      command:
+        argv: "{{ item }}"
+
+    - name: "Smoketest | testssl | results up-to-date"
+      loop:
+        - ["/usr/bin/git", "diff", "--quiet", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns1 }}_p443.csv" ]
+        - ["/usr/bin/git", "diff", "--quiet", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns1 }}_p853.csv" ]
+        - ["/usr/bin/git", "diff", "--quiet", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns2 }}_p443.csv" ]
+        - ["/usr/bin/git", "diff", "--quiet", "./../.github/workflow-fixtures/testssl-results/{{ ip4_vip_dns2 }}_p853.csv" ]
+      delegate_to: 127.0.0.1
+      when: ip4 == ip4_dns1
       changed_when: false
       command:
         argv: "{{ item }}"
