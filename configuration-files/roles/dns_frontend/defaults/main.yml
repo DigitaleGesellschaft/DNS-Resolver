@@ -2,3 +2,4 @@
 dnsdist_nof_thread_dot_per_ip: 3
 dnsdist_nof_thread_doh_per_ip: 3
 dnsdist_nof_thread_upstream: 4
+dnsdist_install_powerdns_repo: "{{ ansible_facts['distribution_release'] == 'noble' }}"
