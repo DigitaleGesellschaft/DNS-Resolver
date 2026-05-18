@@ -71,43 +71,6 @@ table inet nf_filter {
 		# Allow traffic on loopback interface.
 		iif "lo" counter accept
 
-		# Allow DoH / DoT queries to service address.
-		ip daddr {{ ip4_vip_dns1 }} tcp dport { 80, 443, 853 } counter accept
-		ip daddr {{ ip4_vip_dns2 }} tcp dport { 80, 443, 853 } counter accept
-		ip6 daddr {{ ip6_vip_dns1 }} tcp dport { 80, 443, 853 } counter accept
-		ip6 daddr {{ ip6_vip_dns2 }} tcp dport { 80, 443, 853 } counter accept
-
-		# Reject unencrypted DNS to service address.
-		ip daddr {{ ip4_vip_dns1 }} tcp dport 53 counter reject
-		ip daddr {{ ip4_vip_dns2 }} udp dport 53 counter reject
-		ip6 daddr {{ ip6_vip_dns1 }} tcp dport 53 counter reject
-		ip6 daddr {{ ip6_vip_dns2 }} udp dport 53 counter reject
-
-		# Allow remote server response to node address
-		ip daddr {{ ip4 }} tcp sport 53 ct state established counter accept
-		ip daddr {{ ip4 }} udp sport 53 ct state established counter accept
-		ip6 daddr {{ ip6 }} tcp sport 53 ct state established counter accept
-		ip6 daddr {{ ip6 }} udp sport 53 ct state established counter accept
-		ip daddr {{ ip4 }} tcp sport 80 ct state established counter accept
-		ip6 daddr {{ ip6 }} tcp sport 80 ct state established counter accept
-		ip daddr {{ ip4 }} tcp sport 443 ct state established counter accept
-		ip6 daddr {{ ip6 }} tcp sport 443 ct state established counter accept
-		ip daddr {{ ip4 }} udp sport 123 counter accept
-		ip6 daddr {{ ip6 }} udp sport 123 counter accept
-
-		# Allow SSH to node address
-		ip daddr {{ ip4 }} tcp dport {{ network_port_ssh }} ct state new,related,established counter accept
-		ip6 daddr {{ ip6 }} tcp dport {{ network_port_ssh }} ct state new,related,established counter accept
-
-		# Allow HTTP / HTTPS to node address (for Let's Encrypt challenge).
-		ip daddr {{ ip4 }} ip protocol tcp tcp dport { 80, 443 } ct state new,established counter accept
-		ip6 daddr {{ ip6 }} tcp dport { 80, 443 } ct state new,established counter accept
-
-		# Allow inter-link (for Let's Encrypt challenge).
-		ip6 saddr {{ ip6_dns1 }} ip6 daddr {{ ip6 }} tcp dport 31080 ct state new,established counter accept
-		ip6 saddr {{ ip6_dns2 }} ip6 daddr {{ ip6 }} tcp dport 31080 ct state new,established counter accept
-		ip6                          daddr {{ ip6 }} tcp sport 31080 ct state established counter accept
-
 		# Allow VRRP globally
 		ip daddr 224.0.0.18 counter accept
 		ip6 daddr ff02::12 counter accept
@@ -115,6 +78,44 @@ table inet nf_filter {
 		# Allow ICMP globally
 		ip protocol icmp counter accept
 		meta l4proto ipv6-icmp counter accept
+
+		# Divert to service ip rules.
+		ip daddr { {{ ip4_vip_dns1 }}, {{ ip4_vip_dns2 }} } jump filter_ingress_service_ip
+		ip6 daddr { {{ ip6_vip_dns1 }}, {{ ip6_vip_dns2 }} } jump filter_ingress_service_ip
+
+		# Drop traffic directed explicitly towards vrrp ips.
+		ip daddr { {{ ip4_vrrp1 }}, {{ ip4_vrrp1 }} } counter drop
+		ip6 daddr { {{ ip6_vrrp1 }}, {{ ip6_vrrp2 }} } counter drop
+
+		# Remaining traffic goes towards node ips (including link local).
+		jump filter_ingress_node_ip
+		jump filter_ingress_node_ip
+	}
+
+	chain filter_ingress_service_ip {
+		# Allow DoH / DoT queries to service address.
+		tcp dport { 80, 443, 853 } counter accept
+
+		# Reject unencrypted DNS to service address.
+		tcp dport 53 counter reject
+		udp dport 53 counter reject
+
+		# Drop anything else directed towards service ips.
+		drop
+	}
+
+	chain filter_ingress_node_ip {
+		# Allow traffic from established and related packets, drop invalid
+		ct state vmap { established : accept, related : accept, invalid : drop }
+
+		# Allow SSH to node address
+		tcp dport {{ network_port_ssh }} accept
+
+		# Allow HTTP / HTTPS to node address (for Let's Encrypt challenge).
+		tcp dport { 80, 443 } accept
+
+		# Allow inter-link (for Let's Encrypt challenge).
+		ip6 saddr { {{ ip6_dns1 }}, {{ ip6_dns2 }} } tcp dport 31080 accept
 	}
 
 	chain filter_egress {
@@ -124,6 +125,7 @@ table inet nf_filter {
 	chain filter_forward {
 		type filter hook forward priority filter; policy drop;
 	}
+
 }
 
 #
