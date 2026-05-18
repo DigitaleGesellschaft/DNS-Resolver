@@ -1,0 +1,156 @@
+#!/usr/sbin/nft -f
+
+# Useful docs:
+# * https://wiki.nftables.org/wiki-nftables/index.php/Quick_reference-nftables_in_10_minutes
+# * https://wiki.nftables.org/wiki-nftables/index.php/Netfilter_hooks
+
+flush ruleset
+
+#
+# IPv4 counters
+#
+# This table is seen by the iptables binary (used by the munin ip_ plugin).
+#
+table ip filter {
+	chain INPUT {
+		type filter hook input priority filter; policy accept;
+		ip daddr {{ ip4_dns1 }} counter
+		ip daddr {{ ip4_dns2 }} counter
+		ip daddr {{ ip4_vip_dns1 }} counter
+		ip daddr {{ ip4_vip_dns2 }} counter
+		ip daddr {{ ip4_vrrp1 }} counter
+		ip daddr {{ ip4_vrrp2 }} counter
+	}
+
+	chain OUTPUT {
+		type filter hook output priority filter; policy accept;
+		ip saddr {{ ip4_dns1 }} counter
+		ip saddr {{ ip4_dns2 }} counter
+		ip saddr {{ ip4_vip_dns1 }} counter
+		ip saddr {{ ip4_vip_dns2 }} counter
+		ip saddr {{ ip4_vrrp1 }} counter
+		ip saddr {{ ip4_vrrp2 }} counter
+	}
+}
+
+#
+# IPv6 counters
+#
+# This table is seen by the iptables binary (used by the munin ip_ plugin).
+#
+table ip6 filter {
+	chain INPUT {
+		type filter hook input priority filter; policy accept;
+		ip6 daddr {{ ip6_dns1 }} counter
+		ip6 daddr {{ ip6_dns2 }} counter
+		ip6 daddr {{ ip6_vip_dns1 }} counter
+		ip6 daddr {{ ip6_vip_dns2 }} counter
+		ip6 daddr {{ ip6_vrrp1 }} counter
+		ip6 daddr {{ ip6_vrrp2 }} counter
+	}
+
+	chain OUTPUT {
+		type filter hook output priority filter; policy accept;
+		ip6 saddr {{ ip6_dns1 }} counter
+		ip6 saddr {{ ip6_dns2 }} counter
+		ip6 saddr {{ ip6_vip_dns1 }} counter
+		ip6 saddr {{ ip6_vip_dns2 }} counter
+		ip6 saddr {{ ip6_vrrp1 }} counter
+		ip6 saddr {{ ip6_vrrp2 }} counter
+	}
+}
+
+#
+# Filter rules
+#
+table inet nf_filter {
+
+	chain filter_ingress {
+		type filter hook input priority filter; policy drop;
+
+		# Allow traffic on loopback interface.
+		iif "lo" counter accept
+
+		# Allow DoH / DoT queries to service address.
+		ip daddr {{ ip4_vip_dns1 }} tcp dport { 80, 443, 853 } counter accept
+		ip daddr {{ ip4_vip_dns2 }} tcp dport { 80, 443, 853 } counter accept
+		ip6 daddr {{ ip6_vip_dns1 }} tcp dport { 80, 443, 853 } counter accept
+		ip6 daddr {{ ip6_vip_dns2 }} tcp dport { 80, 443, 853 } counter accept
+
+		# Reject unencrypted DNS to service address.
+		ip daddr {{ ip4_vip_dns1 }} tcp dport 53 counter reject
+		ip daddr {{ ip4_vip_dns2 }} udp dport 53 counter reject
+		ip6 daddr {{ ip6_vip_dns1 }} tcp dport 53 counter reject
+		ip6 daddr {{ ip6_vip_dns2 }} udp dport 53 counter reject
+
+		# Allow remote server response to node address
+		ip daddr {{ ip4 }} tcp sport 53 ct state established counter accept
+		ip daddr {{ ip4 }} udp sport 53 ct state established counter accept
+		ip6 daddr {{ ip6 }} tcp sport 53 ct state established counter accept
+		ip6 daddr {{ ip6 }} udp sport 53 ct state established counter accept
+		ip daddr {{ ip4 }} tcp sport 80 ct state established counter accept
+		ip6 daddr {{ ip6 }} tcp sport 80 ct state established counter accept
+		ip daddr {{ ip4 }} tcp sport 443 ct state established counter accept
+		ip6 daddr {{ ip6 }} tcp sport 443 ct state established counter accept
+		ip daddr {{ ip4 }} udp sport 123 counter accept
+		ip6 daddr {{ ip6 }} udp sport 123 counter accept
+
+		# Allow SSH to node address
+		ip daddr {{ ip4 }} tcp dport {{ network_port_ssh }} ct state new,related,established counter accept
+		ip6 daddr {{ ip6 }} tcp dport {{ network_port_ssh }} ct state new,related,established counter accept
+
+		# Allow HTTP / HTTPS to node address (for Let's Encrypt challenge).
+		ip daddr {{ ip4 }} ip protocol tcp tcp dport { 80, 443 } ct state new,established counter accept
+		ip6 daddr {{ ip6 }} tcp dport { 80, 443 } ct state new,established counter accept
+
+		# Allow inter-link (for Let's Encrypt challenge).
+		ip6 saddr {{ ip6_dns1 }} ip6 daddr {{ ip6 }} tcp dport 31080 ct state new,established counter accept
+		ip6 saddr {{ ip6_dns2 }} ip6 daddr {{ ip6 }} tcp dport 31080 ct state new,established counter accept
+		ip6                          daddr {{ ip6 }} tcp sport 31080 ct state established counter accept
+
+		# Allow VRRP globally
+		ip daddr 224.0.0.18 counter accept
+		ip6 daddr ff02::12 counter accept
+
+		# Allow ICMP globally
+		ip protocol icmp counter accept
+		meta l4proto ipv6-icmp counter accept
+	}
+
+	chain filter_egress {
+		type filter hook output priority filter; policy accept;
+	}
+
+	chain filter_forward {
+		type filter hook forward priority filter; policy drop;
+	}
+}
+
+#
+# Raw rules
+#
+# These rules are evaluated before connection tracking kicks in.
+#
+table inet nf_raw {
+
+	chain raw_ingress {
+		type filter hook prerouting priority raw; policy accept;
+
+		# Disable connection tracking on queries from clients
+		ip daddr {{ ip4_vip_dns1 }} notrack
+		ip daddr {{ ip4_vip_dns2 }} notrack
+		ip6 daddr {{ ip6_vip_dns1 }} notrack
+		ip6 daddr {{ ip6_vip_dns2 }} notrack
+	}
+
+	chain raw_egress {
+		type filter hook output priority raw; policy accept;
+
+		# Disable connection tracking on responses to clients
+		ip saddr {{ ip4_vip_dns1 }} notrack
+		ip saddr {{ ip4_vip_dns2 }} notrack
+		ip6 saddr {{ ip6_vip_dns1 }} notrack
+		ip6 saddr {{ ip6_vip_dns2 }} notrack
+	}
+
+}
