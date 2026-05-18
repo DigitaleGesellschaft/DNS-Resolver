@@ -4,13 +4,17 @@
     state: latest
     name: unbound
 
-- name: unbound | increase memory for so-sndbuf and so-rcvbuf
-  blockinfile:
-    path: /etc/sysctl.conf
-    marker: "# {mark} MANAGED BY ANSIBLE - unbound | increase memory for so-sndbuf and so-rcvbuf"
-    block: |
-      net.core.rmem_max = 8388608
-      net.core.wmem_max = 8388608
+- name: unbound | increase socket buffer size
+  loop:
+    - rmem_max
+    - wmem_max
+  sysctl:
+    name: "net.core.{{ item }}"
+    value: '8388608'
+    sysctl_set: true
+    sysctl_file: /etc/sysctl.d/99-socket-buffer-size.conf
+    state: present
+    reload: true
 
 - name: unbound | started
   service:

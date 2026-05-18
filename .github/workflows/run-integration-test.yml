@@ -63,6 +63,7 @@ jobs:
       - name: Prepare ansible
         run: |
           install -m 0644 .github/workflow-templates/ci-vault.yml configuration-files/group_vars/local/vault.yml
+          ansible-galaxy install -f -r requirements.yml
 
       - name: Run ansible
         run: |
