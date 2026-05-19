@@ -87,9 +87,9 @@ table inet nf_filter {
 		ip daddr { {{ ip4_vrrp1 }}, {{ ip4_vrrp1 }} } counter drop
 		ip6 daddr { {{ ip6_vrrp1 }}, {{ ip6_vrrp2 }} } counter drop
 
-		# Remaining traffic goes towards node ips (including link local).
-		jump filter_ingress_node_ip
-		jump filter_ingress_node_ip
+		# Remaining traffic goes towards node ips.
+		ip daddr {{ ip4 }} jump filter_ingress_node_ip
+		ip6 daddr {{ ip6 }} jump filter_ingress_node_ip
 	}
 
 	chain filter_ingress_service_ip {
