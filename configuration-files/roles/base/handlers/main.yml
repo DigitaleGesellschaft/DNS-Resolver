@@ -11,14 +11,10 @@
     name: ssh
     state: restarted
 
-- name: persist rules
-  community.general.iptables_state:
-    ip_version: "ip{{ item.ip_version }}"
-    state: saved
-    path: "/etc/iptables/rules.{{ item.ip_version }}"
-  loop:
-    - { ip_version: "v4" }
-    - { ip_version: "v6" }
+- name: firewall | apply ruleset
+  systemd_service:
+    name: nftables
+    state: reloaded
 
 - name: apply netplan
   command: sudo netplan apply
