@@ -80,12 +80,12 @@ table inet nf_filter {
 		meta l4proto ipv6-icmp counter accept
 
 		# Divert to service ip rules.
-		ip daddr { {{ ip4_vip_dns1 }}, {{ ip4_vip_dns2 }} } jump filter_ingress_service_ip
-		ip6 daddr { {{ ip6_vip_dns1 }}, {{ ip6_vip_dns2 }} } jump filter_ingress_service_ip
+		ip daddr { {{ ip4_vip_dns1 }}, {{ ip4_vip_dns2 }} } goto filter_ingress_service_ip
+		ip6 daddr { {{ ip6_vip_dns1 }}, {{ ip6_vip_dns2 }} } goto filter_ingress_service_ip
 
 		# Divert to node ip rules.
-		ip daddr {{ ip4 }} jump filter_ingress_node_ip
-		ip6 daddr {{ ip6 }} jump filter_ingress_node_ip
+		ip daddr {{ ip4 }} goto filter_ingress_node_ip
+		ip6 daddr {{ ip6 }} goto filter_ingress_node_ip
 	}
 
 	chain filter_ingress_service_ip {
