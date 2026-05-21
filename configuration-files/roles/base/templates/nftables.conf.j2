@@ -83,11 +83,7 @@ table inet nf_filter {
 		ip daddr { {{ ip4_vip_dns1 }}, {{ ip4_vip_dns2 }} } jump filter_ingress_service_ip
 		ip6 daddr { {{ ip6_vip_dns1 }}, {{ ip6_vip_dns2 }} } jump filter_ingress_service_ip
 
-		# Drop traffic directed explicitly towards vrrp ips.
-		ip daddr { {{ ip4_vrrp1 }}, {{ ip4_vrrp1 }} } counter drop
-		ip6 daddr { {{ ip6_vrrp1 }}, {{ ip6_vrrp2 }} } counter drop
-
-		# Remaining traffic goes towards node ips.
+		# Divert to node ip rules.
 		ip daddr {{ ip4 }} jump filter_ingress_node_ip
 		ip6 daddr {{ ip6 }} jump filter_ingress_node_ip
 	}
@@ -99,9 +95,6 @@ table inet nf_filter {
 		# Reject unencrypted DNS to service address.
 		tcp dport 53 counter reject
 		udp dport 53 counter reject
-
-		# Drop anything else directed towards service ips.
-		drop
 	}
 
 	chain filter_ingress_node_ip {
