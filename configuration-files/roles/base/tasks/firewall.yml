@@ -38,3 +38,9 @@
     owner: root
     group: root
     mode: 0644
+
+- name: firewall | enabled
+  service:
+    name: nftables
+    state: started
+    enabled: true
