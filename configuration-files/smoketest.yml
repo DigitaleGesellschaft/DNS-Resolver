@@ -16,8 +16,8 @@
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
       changed_when: false
-      retries: 7
-      delay: 7
+      retries: 3
+      delay: 3
       register: smoketest_dig
       until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world" from server')
       command:
