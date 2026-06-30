@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 server:
-  
+
   directory: "/etc/unbound"
   pidfile: "/etc/unbound/unbound.pid"
   username: unbound
@@ -83,6 +83,13 @@ server:
   num-queries-per-thread: {{ unbound_num_queries_per_thread }}
   so-rcvbuf:              {{ unbound_so_rcvbuf }}
   so-sndbuf:              {{ unbound_so_sndbuf }}
+
+{% if unbound_test_records %}
+  # --------------------------------------------------------------------------------------------------------------------
+  # Test records
+  # --------------------------------------------------------------------------------------------------------------------
+  local-data: 'txt.4KExSeZORLCU0SDx.test. 10 IN TXT "hello world"'
+{% endif %}
 
 # Keep a locale copy of the root zone to boost lookup performance
 auth-zone:

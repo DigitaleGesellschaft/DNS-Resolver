@@ -8,3 +8,5 @@ unbound_outgoing_range: 100
 unbound_num_queries_per_thread: 4096
 unbound_so_rcvbuf: "8m"
 unbound_so_sndbuf: "8m"
+
+unbound_test_records: false

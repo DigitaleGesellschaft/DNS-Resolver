@@ -31,3 +31,5 @@ cert_path: "/etc/ssl/"
 
 ip6_old_res1: 2a05:fc84:0:5::116 # remove this line after migration once old servers are shut down
 ip6_old_res2: 2a05:fc84:0:5::117 # remove this line after migration once old servers are shut down
+
+unbound_test_records: true

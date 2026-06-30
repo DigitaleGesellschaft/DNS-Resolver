@@ -5,19 +5,19 @@
   tasks:
     - name: "Smoketest | dig"
       loop:
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.dns-probe.znerol.ch", "+retry=0", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
+        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
       changed_when: false
-      retries: 7
-      delay: 7
+      retries: 3
+      delay: 3
       register: smoketest_dig
       until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world" from server')
       command:
