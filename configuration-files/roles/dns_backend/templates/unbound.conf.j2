@@ -84,6 +84,9 @@ server:
   so-rcvbuf:              {{ unbound_so_rcvbuf }}
   so-sndbuf:              {{ unbound_so_sndbuf }}
 
+  # Mitigate CVE-2026-44690
+  aggressive-nsec:        no
+
 {% if unbound_test_records %}
   # --------------------------------------------------------------------------------------------------------------------
   # Test records
