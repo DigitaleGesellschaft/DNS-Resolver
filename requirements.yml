@@ -1,0 +1,4 @@
+---
+collections:
+  - name: community.crypto
+    version: 2.26.8
