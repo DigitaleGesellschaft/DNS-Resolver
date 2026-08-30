@@ -25,7 +25,7 @@ console:
   acl:
     - "127.0.0.0/8"
 
-# Start the web server on port 8083, using password 'set a random password here'
+# Start the web server on port 8083, using a password
 # https://dnsdist.org/guides/webserver.html
 webserver:
   listen_addresses:
@@ -47,15 +47,15 @@ binds:
   # https://dnsdist.org/guides/dns-over-tls.html
 {% for interf in vip_interfaces %}
   - listen_address: "{{ interf }}"
-    reuseport: true
-    fast_open_queue_size: 50
-    threads: {{ dnsdist_nof_thread_dot_per_ip }}
     protocol: "DoT"
+    reuseport: true
+    threads: {{ dnsdist_nof_thread_dot_per_ip }}
+    tcp:
+      fast_open_queue_size: 50
     tls:
       certificates:
         - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
           key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
-      provider: "openssl"
       prefer_server_ciphers: true
       minimum_version: "tls1.2"
 {% endfor %}
@@ -63,22 +63,22 @@ binds:
 {% for interf in vip_interfaces %}
   # accept DNS over HTTPS (DoH) queries on TCP/443
   # https://dnsdist.org/guides/dns-over-https.html
-  - listen_address: "127.0.0.1:443"
-    reuseport: true
-    fast_open_queue_size: 50
-    threads: {{ dnsdist_nof_thread_doh_per_ip }}
+  - listen_address: "{{ interf }}"
     protocol: "DoH"
+    reuseport: true
+    threads: {{ dnsdist_nof_thread_doh_per_ip }}
+    tcp:
+      fast_open_queue_size: 50
     tls:
       certificates:
         - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
           key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+      prefer_server_ciphers: true
+      minimum_version: "tls1.2"
     doh:
-      provider: "nghttp2"
       paths:
         - "/"
         - "/dns-query"
-      prefer_server_ciphers: true
-      minimum_version: "tls1.2"
       responses_map:
         - expression: "^/$"
           status: 302
@@ -108,7 +108,7 @@ binds:
 # https://dnsdist.org/guides/serverselection.html
 backends:
 {% for i in range(dnsdist_nof_thread_upstream) %}
-  - name: "backend-{{ i }}
+  - name: "backend-{{ i }}"
     address: "{{ ip_localhost }}"
     protocol: "Do53"
 {% endfor %}
