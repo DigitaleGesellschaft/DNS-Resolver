@@ -56,6 +56,7 @@ binds:
       certificates:
         - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
           key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+      ciphers: "DEFAULT:-CBC"
       prefer_server_ciphers: true
       minimum_version: "tls1.2"
 {% endfor %}
@@ -73,6 +74,7 @@ binds:
       certificates:
         - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
           key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+      ciphers: "DEFAULT:-CBC"
       prefer_server_ciphers: true
       minimum_version: "tls1.2"
     doh:
