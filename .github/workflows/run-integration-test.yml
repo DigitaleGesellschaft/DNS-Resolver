@@ -77,6 +77,15 @@ jobs:
         run: |
           ansible-playbook configuration-files/smoketest.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
 
+      - name: Upload testssl results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testssl-results
+          path: .github/workflow-fixtures/testssl-results
+          retention-days: 3
+          compression-level: 9
+
       - name: Dump system logs
         if: always()
         run: |
