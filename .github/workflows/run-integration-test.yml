@@ -77,6 +77,11 @@ jobs:
         run: |
           ansible-playbook configuration-files/smoketest.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
 
+      - name: Print testssl output diff
+        if: always()
+        run: |
+          git diff .github/workflow-fixtures/testssl-results
+
       - name: Upload testssl results
         uses: actions/upload-artifact@v4
         if: always()
