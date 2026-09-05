@@ -16,19 +16,11 @@
 
 - name: dnsdist | generate config file from template
   template:
-    src: dnsdist.yml.j2
-    dest: /etc/dnsdist/dnsdist.yml
+    src: dnsdist.conf.j2
+    dest: /etc/dnsdist/dnsdist.conf
     owner: root
     group: _dnsdist
     mode: "0644"
-  when: service_certificate.stat.exists
-  notify:
-    - restart dnsdist
-
-- name: dnsdist | remove legacy config file
-  file:
-    state: absent
-    dest: /etc/dnsdist/dnsdist.conf
   when: service_certificate.stat.exists
   notify:
     - restart dnsdist
