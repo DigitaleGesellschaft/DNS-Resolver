@@ -7,7 +7,7 @@ on:
 
 jobs:
   integration-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code
@@ -24,7 +24,8 @@ jobs:
           genisoimage
           libvirt-clients
           libvirt-daemon-system
-          qemu-kvm
+          qemu-system-x86
+          testssl.sh
           xsltproc
 
       - name: Setup Tofu
@@ -75,6 +76,20 @@ jobs:
       - name: Run smoketest
         run: |
           ansible-playbook configuration-files/smoketest.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
+
+      - name: Print testssl output diff
+        if: always()
+        run: |
+          git diff .github/workflow-fixtures/testssl-results
+
+      - name: Upload testssl results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testssl-results
+          path: .github/workflow-fixtures/testssl-results
+          retention-days: 3
+          compression-level: 9
 
       - name: Dump system logs
         if: always()
