@@ -24,7 +24,7 @@ jobs:
           genisoimage
           libvirt-clients
           libvirt-daemon-system
-          qemu-kvm
+          qemu-system-x86
           testssl.sh
           xsltproc
 
