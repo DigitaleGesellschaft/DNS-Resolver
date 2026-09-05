@@ -25,6 +25,7 @@ jobs:
           libvirt-clients
           libvirt-daemon-system
           qemu-kvm
+          testssl.sh
           xsltproc
 
       - name: Setup Tofu
