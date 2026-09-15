@@ -62,9 +62,9 @@ binds:
       minimum_version: "tls1.2"
 {% endfor %}
 
-{% for interf in vip_interfaces %}
   # accept DNS over HTTPS (DoH) queries on TCP/443
   # https://dnsdist.org/guides/dns-over-https.html
+{% for interf in vip_interfaces %}
   - listen_address: "{{ interf }}"
     protocol: "DoH"
     reuseport: true
@@ -87,24 +87,40 @@ binds:
         - expression: "^/$"
           status: 302
           content: "https://{{ name_intern }}.{{ domain }}/"
+      custom_response_headers:
+        - key: "alt-svc"
+          value: 'h3=":443"'
 {% endfor %}
 
 # accept DNS over QUIC (DoQ) queries on UDP/853
 # https://www.dnsdist.org/guides/dns-over-quic.html
-#  - listen_address: "127.0.0.1:853"
-#    protocol: "DoQ"
-#    tls:
-#      certificates:
-#        - certificate: "server.crt"
-#          key: "server.key"
+{% for interf in vip_interfaces %}
+  - listen_address: "{{ interf }}"
+    protocol: "DoQ"
+    reuseport: true
+    threads: {{ dnsdist_nof_thread_doq_per_ip }}
+    tls:
+      certificates:
+        - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
+          key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+        - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
+          key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"
+{% endfor %}
+
 # accept DNS over HTTP/3 (DoH3) queries on UDP/443
 # https://www.dnsdist.org/guides/dns-over-http3.html
-#  - listen_address: "127.0.0.1:443"
-#    protocol: "DoH3"
-#    tls:
-#      certificates:
-#        - certificate: "server.crt"
-#          key: "server.key"
+{% for interf in vip_interfaces %}
+  - listen_address: "{{ interf }}:443"
+    protocol: "DoH3"
+    reuseport: true
+    threads: {{ dnsdist_nof_thread_doh3_per_ip }}
+    tls:
+      certificates:
+        - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
+          key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+        - certificate: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
+          key: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"
+{% endfor %}
 
 # define downstream servers, aka backends
 # https://dnsdist.org/guides/downstreams.html
