@@ -27,6 +27,7 @@ jobs:
           qemu-system-x86
           testssl.sh
           xsltproc
+          knot-dnsutils
 
       - name: Setup Tofu
         uses: opentofu/setup-opentofu@v1
