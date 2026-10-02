@@ -38,6 +38,10 @@ Some clients let you specify the resolver's IP address directly, so they don't n
 
 You still need to configure `dns.digitale-gesellschaft.ch` as the hostname, otherwise certificate validation fails.
 
+## Server Side TLS Configuration
+
+Our DNS resolvers use version 6.0 of the *Intermediate* recommended configuration published by [tlsref.org](https://docs.tlsref.org/server-side-tls.html). Ancient clients or resource restricted IoT systems may fail to connect to the server and report an SSL error. Please open an issue if that happens.
+
 # Contribution
 
 Contributions to this project are very welcome. If you like to contribute, check-out [CONTRIBUTION](CONTRIBUTION.md) for more information.
