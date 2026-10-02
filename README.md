@@ -15,16 +15,28 @@ Also, checkout our [website](https://www.digitale-gesellschaft.ch/dns/) and the 
 
 # How to use our DNS resolvers
 
+> [!NOTE]
+> We deliberately do not operate unencrypted DNS service over Port 53.
+
 To use our DNS resolvers on your DoH or DoT capable client simply configure:
 
 | Protocol             | Address                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------ |
 | DNS-over-HTTPS (DoH) | `https://dns.digitale-gesellschaft.ch/dns-query`                                                 |
-| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch` if you need to specify also a Port use the DoT default Port `853` |
+| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch`, Port `853`                                                       |
 
 For specific configuration check out our [How-Tos](howtos).
 
-**Note:** We deliberately do not operate unencrypted DNS service over Port 53.
+## IP addresses
+
+Some clients let you specify the resolver's IP address directly, so they don't need another DNS resolver to look up our hostname.
+
+| Protocol | Addresses                        |
+| -------- | -------------------------------- |
+| IPv4     | `185.95.218.42`, `185.95.218.43` |
+| IPv6     | `2a05:fc84::42`, `2a05:fc84::43` |
+
+You still need to configure `dns.digitale-gesellschaft.ch` as the hostname, otherwise certificate validation fails.
 
 # Contribution
 
