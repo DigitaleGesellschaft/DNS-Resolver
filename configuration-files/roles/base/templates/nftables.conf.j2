@@ -92,6 +92,9 @@ table inet nf_filter {
 		# Allow DoH / DoT queries to service address.
 		tcp dport { 80, 443, 853 } counter accept
 
+		# Allow DoH3 / DoQ queries to service address.
+		udp dport { 443, 853 } counter accept
+
 		# Reject unencrypted DNS to service address.
 		tcp dport 53 counter reject
 		udp dport 53 counter reject

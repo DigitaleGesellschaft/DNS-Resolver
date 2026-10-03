@@ -8,6 +8,7 @@
       - git
       - htop
       - iputils-ping
+      - knot-dnsutils
       - net-tools
       - netcat-openbsd
       - openssh-client

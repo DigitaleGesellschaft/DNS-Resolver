@@ -20,7 +20,9 @@ title: Secure DNS Resolver Architecture
 ---
 graph LR
     dotClient(DoT Client) -->|TLS 853/tcp| frontend(Frontend)
+    doqClient(DoQ Client) -->|QUIC 853/udp| frontend
     dohClient(DoH Client) -->|HTTPS 443/tcp| frontend
+    doh3Client(DoH3 Client) -->|HTTP/3 443/udp| frontend
     subgraph server [Secure DNS Resolver]
         direction LR
         frontend -->|53/udp/tcp| backend

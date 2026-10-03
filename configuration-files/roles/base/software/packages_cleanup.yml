@@ -1,5 +1,5 @@
 ---
-- name: software | remove obsolet software packages
+- name: software | remove obsolete software packages
   package:
     state: absent
     name:
