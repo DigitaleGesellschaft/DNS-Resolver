@@ -30,6 +30,8 @@
 | `dg4_dns`                          | IP v4 default gateway                                      |
 | `dg6_dns`                          | IP v6 default gateway                                      |
 | `dnsdist_nof_thread_doh_per_ip`    | Number of dnsdist threads per DoH IP                       |
+| `dnsdist_nof_thread_doh3_per_ip`   | Number of dnsdist threads per DoH3 IP                      |
+| `dnsdist_nof_thread_doq_per_ip`    | Number of dnsdist threads per DoQ IP                       |
 | `dnsdist_nof_thread_dot_per_ip`    | Number of dnsdist threads per DoT IP                       |
 | `dnsdist_nof_thread_upstream`      | Number of dnsdist upstream threads                         |
 | `domain`                           | Domain of this resolver                                    |

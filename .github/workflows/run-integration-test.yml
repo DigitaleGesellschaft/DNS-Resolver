@@ -27,6 +27,8 @@ jobs:
           qemu-system-x86
           testssl.sh
           xsltproc
+          knot-dnsutils
+          xz-utils
 
       - name: Setup Tofu
         uses: opentofu/setup-opentofu@v1
@@ -72,6 +74,14 @@ jobs:
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
           # Run playbook a second time to setup TLS services.
           ansible-playbook configuration-files/resolver.yml -i configuration-files/local.yml --ssh-common-args '-p 55022'
+
+        # curl in ubuntu 26.04 doesn't support http3 https://bugs.launchpad.net/ubuntu/+source/curl/+bug/2122387
+      - name: Override curl
+        run: |
+          V=8.22.0
+          curl -fsSLO "https://github.com/stunnel/static-curl/releases/download/${V}/curl-linux-x86_64-glibc-${V}.tar.xz"
+          tar -xJf "curl-linux-x86_64-glibc-${V}.tar.xz" curl
+          sudo install -m755 curl /usr/bin/curl
 
       - name: Run smoketest
         run: |

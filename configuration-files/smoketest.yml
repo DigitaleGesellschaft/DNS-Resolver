@@ -2,26 +2,57 @@
 - hosts: all
   become: false
   gather_facts: no
+  vars:
+    dns_servers:
+      - "{{ ip4_vip_dns1 }}"
+      - "{{ ip4_vip_dns2 }}"
+      - "[{{ ip6_vip_dns1 }}]"
+      - "[{{ ip6_vip_dns2 }}]"
   tasks:
-    - name: "Smoketest | dig"
-      loop:
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip4_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns1 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+https"]
-        - ["/usr/bin/dig", "@{{ ip6_vip_dns2 }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+identify", "+tls"]
+    - name: "Smoketest | kdig"
+      vars:
+        transports: ["+https", "+tls", "+quic"]
+        server: "{{ item.0 }}"
+        transport: "{{ item.1 }}"
+      loop: "{{ dns_servers | product(transports) | list }}"
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
       changed_when: false
       retries: 3
       delay: 3
       register: smoketest_dig
-      until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world" from server')
-      command:
-        argv: "{{ item }}"
+      until: smoketest_dig.rc == 0 and smoketest_dig['stdout'].startswith('"hello world"')
+      ansible.builtin.command:
+        argv: ["/usr/bin/kdig", "@{{ server }}", "-tTXT", "txt.4KExSeZORLCU0SDx.test", "+retry=0", "+short", "+stats", "{{ transport }}"]
+
+      # kdig can't do DoH3
+    - name: "Smoketest | doh3 curl"
+      loop: "{{ dns_servers }}"
+      vars:
+        doh_host: dns.digitale-gesellschaft.ch
+        encoded_dns_request: 1ksBIAABAAAAAAAAA3R4dBA0S0V4U2VaT1JMQ1UwU0R4BHRlc3QAABAAAQ== # txt.4KExSeZORLCU0SDx.test TXT
+      delegate_to: 127.0.0.1
+      when: ip4 == ip4_dns1
+      changed_when: false
+      check_mode: false
+      retries: 3
+      delay: 3
+      register: smoketest_curl
+      until:
+        - smoketest_curl.rc == 0
+        - smoketest_curl.stdout.endswith('68656c6c6f20776f726c64') # hello world
+      loop_control:
+        label: "{{ item }}"
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: >-
+          set -o pipefail;
+          /usr/bin/curl -sS -f --http3-only -k --retry 0
+          --resolve '{{ doh_host }}:443:{{ item }}'
+          -H 'accept: application/dns-message'
+          -w '%{stderr}%{http_version} %{response_code} %{time_total}s'
+          'https://{{ doh_host }}/dns-query?dns={{ encoded_dns_request }}'
+          | xxd -p | tr -d '\n'
 
     - name: "Smoketest | testssl | async"
       loop:

@@ -2,7 +2,7 @@
 
 Information, configuration files and _how tos_ about the public secure DNS resolvers operated by the Digital Society Switzerland.
 
-The Digital Society Switzerland runs publicly available DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) DNS resolver systems.
+The Digital Society Switzerland runs publicly available DNS-over-HTTPS (DoH), DNS-over-HTTP/3 (DoH3), DNS-over-TLS (DoT) and DNS-over-QUIC (DoQ) DNS resolver systems.
 
 ![Secure DNS resolver overview](assets/Secure-DNS-Resolver-Overview.png)
 
@@ -18,12 +18,14 @@ Also, checkout our [website](https://www.digitale-gesellschaft.ch/dns/) and the 
 > [!NOTE]
 > We deliberately do not operate unencrypted DNS service over Port 53.
 
-To use our DNS resolvers on your DoH or DoT capable client simply configure:
+To use our DNS resolvers on your DoH, DoH3, DoT or DoQ capable client simply configure:
 
-| Protocol             | Address                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------ |
-| DNS-over-HTTPS (DoH) | `https://dns.digitale-gesellschaft.ch/dns-query`                                                 |
-| DNS-over-TLS (DoT)   | `dns.digitale-gesellschaft.ch`, Port `853`                                                       |
+| Protocol               | Address                                           | Port    |
+| ---------------------- | ------------------------------------------------- | ------- |
+| DNS-over-HTTPS (DoH)   | `https://dns.digitale-gesellschaft.ch/dns-query`  | tcp/443 |
+| DNS-over-HTTP/3 (DoH3) | `https://dns.digitale-gesellschaft.ch/dns-query`  | udp/443 |
+| DNS-over-TLS (DoT)     | `dns.digitale-gesellschaft.ch`                    | tcp/853 |
+| DNS-over-QUIC (DoQ)    | `dns.digitale-gesellschaft.ch`                    | udp/853 |
 
 For specific configuration check out our [How-Tos](howtos).
 
