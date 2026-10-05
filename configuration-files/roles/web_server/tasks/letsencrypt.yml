@@ -116,6 +116,6 @@
   register: service_certificate
 
 - name: Create Let's Encrypt Certificates, if not existing
+  when: not service_certificate.stat.exists
   block:
     - ansible.builtin.include_tasks: letsencrypt_create.yml
-  when: not service_certificate.stat.exists
