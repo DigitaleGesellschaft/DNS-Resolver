@@ -1,0 +1,6 @@
+---
+collections:
+  - name: ansible.posix
+    version: 2.2.2
+  - name: community.general
+    version: 2.18.0

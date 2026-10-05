@@ -15,4 +15,5 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@e7f397ad6dfa20d274afa17cd7bbedd84ed136f5 # v26.9.0
         with:
+          requirements_file: "configuration-files/requirements.yml"
           working_directory: "configuration-files"
