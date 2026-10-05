@@ -73,6 +73,9 @@
     dest: "/var/run/acme/acme-challenge/.well-known/acme-challenge/check.txt"
     content: |
       "this is host {{ inventory_hostname }}"
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Let's Encrypt | copy deploy hook
   ansible.builtin.copy:
@@ -110,13 +113,5 @@
     job: "/usr/local/sbin/letsencrypt-renew"
   when: inventory_hostname == "dns2"
 
-- name: Let's Encrypt | check if service certificate available
-  ansible.builtin.stat:
-    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa"
-  register: service_certificate
-
 - name: Create Let's Encrypt Certificates, if not existing
-  when: not service_certificate.stat.exists
-  block:
-    - name: Create Let's Encrypt Certificates
-      ansible.builtin.include_tasks: letsencrypt_create.yml
+  ansible.builtin.include_tasks: letsencrypt_create.yml

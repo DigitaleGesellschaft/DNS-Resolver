@@ -1,10 +1,53 @@
 ---
 - name: Create internal ECDSA certificate
-  ansible.builtin.command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type ecdsa --cert-name {{ name_intern }}.{{ domain }}.ecdsa -d {{ name_intern
-    }}.{{ domain }}
+  ansible.builtin.command:
+    creates: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa"
+    argv:
+      - "/usr/bin/certbot"
+      - "certonly"
+      - "--config"
+      - "{{ cert_path }}cli.ini"
+      - "--key-type"
+      - "ecdsa"
+      - "--cert-name"
+      - "{{ name_intern }}.{{ domain }}.ecdsa"
+      - "-d"
+      - "{{ name_intern }}.{{ domain }}"
+
 - name: Create public ECDSA certificate
-  ansible.builtin.command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type ecdsa --cert-name {{ host_public}}.{{ domain }}.ecdsa -d {{ host_public }}.{{
-    domain }} -d {{ name_public }}.{{ domain }} -d {{ name_other_public }}.{{ domain }}
+  ansible.builtin.command:
+    creates: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa"
+    argv:
+      - "/usr/bin/certbot"
+      - "certonly"
+      - "--config"
+      - "{{ cert_path }}cli.ini"
+      - "--key-type"
+      - "ecdsa"
+      - "--cert-name"
+      - "{{ host_public }}.{{ domain }}.ecdsa"
+      - "-d"
+      - "{{ host_public }}.{{ domain }}"
+      - "-d"
+      - "{{ name_public }}.{{ domain }}"
+      - "-d"
+      - "{{ name_other_public }}.{{ domain }}"
+
 - name: Create public RSA certificate
-  ansible.builtin.command: certbot certonly --config "{{ cert_path }}cli.ini" --key-type rsa --cert-name {{ host_public}}.{{ domain }}.rsa -d {{ host_public }}.{{
-    domain }} -d {{ name_public }}.{{ domain }} -d {{ name_other_public }}.{{ domain }}
+  ansible.builtin.command:
+    creates: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa"
+    argv:
+      - "/usr/bin/certbot"
+      - "certonly"
+      - "--config"
+      - "{{ cert_path }}cli.ini"
+      - "--key-type"
+      - "rsa"
+      - "--cert-name"
+      - "{{ host_public }}.{{ domain }}.rsa"
+      - "-d"
+      - "{{ host_public }}.{{ domain }}"
+      - "-d"
+      - "{{ name_public }}.{{ domain }}"
+      - "-d"
+      - "{{ name_other_public }}.{{ domain }}"

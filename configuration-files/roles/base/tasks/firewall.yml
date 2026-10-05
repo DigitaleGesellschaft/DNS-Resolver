@@ -1,7 +1,7 @@
 ---
 - name: Firewall | install software
   ansible.builtin.package:
-    state: latest
+    state: present
     name:
       - iptables
       - nftables

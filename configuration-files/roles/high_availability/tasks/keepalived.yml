@@ -1,7 +1,7 @@
 ---
 - name: Keepalived | install
   ansible.builtin.package:
-    state: latest
+    state: present
     name: keepalived
 
 - name: Keepalived | ensure keepalived is started

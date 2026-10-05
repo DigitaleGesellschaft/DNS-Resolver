@@ -17,6 +17,7 @@
     state: reloaded
 
 - name: Apply netplan
-  ansible.builtin.command: sudo netplan apply
   async: 45
   poll: 0
+  changed_when: true
+  ansible.builtin.command: sudo netplan apply

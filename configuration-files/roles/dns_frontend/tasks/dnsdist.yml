@@ -1,7 +1,7 @@
 ---
 - name: PowerDNS dnsdist | install
   ansible.builtin.package:
-    state: latest
+    state: present
     name: dnsdist
 
 - name: PowerDNS dnsdist | check if service certificate available
