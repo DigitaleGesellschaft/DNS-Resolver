@@ -52,7 +52,7 @@
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
-    csr_content: "{{ web_server_csr.web_server_csr }}"
+    csr_content: "{{ web_server_csr.csr }}"
     privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
     provider: selfsigned
   when: not web_server_pub_ecdsa_check.stat.exists
@@ -72,7 +72,7 @@
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
-    csr_content: "{{ web_server_csr.web_server_csr }}"
+    csr_content: "{{ web_server_csr.csr }}"
     privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"
     provider: selfsigned
   when: not web_server_pub_rsa_check.stat.exists
@@ -90,7 +90,7 @@
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
     path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/fullchain.pem"
-    csr_content: "{{ web_server_csr.web_server_csr }}"
+    csr_content: "{{ web_server_csr.csr }}"
     privatekey_path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa/privkey.pem"
     provider: selfsigned
   when: not web_server_int_ecdsa_check.stat.exists
