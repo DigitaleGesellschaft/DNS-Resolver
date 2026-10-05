@@ -20,4 +20,4 @@
   async: 45
   poll: 0
   changed_when: true
-  ansible.builtin.command: sudo netplan apply
+  ansible.builtin.command: netplan apply
