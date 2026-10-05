@@ -1,10 +1,10 @@
 ---
-- name: lets encrypt | install
+- name: Let's Encrypt | install
   community.general.snap:
     name: certbot
     classic: true
 
-- name: lets encrypt | symlink certbot
+- name: Let's Encrypt | symlink certbot
   ansible.builtin.file:
     src: "/snap/bin/certbot"
     dest: "/usr/bin/certbot"
@@ -18,7 +18,7 @@
     state: directory
     mode: "0755"
 
-- name: lets encrypt | create config dir
+- name: Let's Encrypt | create config dir
   ansible.builtin.file:
     path: "{{ cert_path }}"
     state: directory
@@ -26,7 +26,7 @@
     group: root
     mode: "0755"
 
-- name: lets encrypt | create config accounts sub dir
+- name: Let's Encrypt | create config accounts sub dir
   ansible.builtin.file:
     path: "{{ cert_path }}accounts"
     state: directory
@@ -34,7 +34,7 @@
     group: root
     mode: "0700"
 
-- name: lets encrypt | create config sub dir
+- name: Let's Encrypt | create config sub dir
   ansible.builtin.file:
     path: "{{ cert_path }}{{ item.file }}"
     state: directory
@@ -47,7 +47,7 @@
     - { file: "renewal" }
     - { file: "renewal-hooks" }
 
-- name: lets encrypt | copy cli config
+- name: Let's Encrypt | copy cli config
   ansible.builtin.copy:
     src: cli.ini
     dest: "{{ cert_path }}cli.ini"
@@ -55,7 +55,7 @@
     group: root
     mode: "0644"
 
-- name: lets encrypt | create acme well known dir
+- name: Let's Encrypt | create acme well known dir
   ansible.builtin.file:
     path: /var/run/acme/acme-challenge/.well-known/acme-challenge
     state: directory
@@ -68,13 +68,13 @@
 # curl http://dns1.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
 # curl http://dns2.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
 # returns either "this is host dns1" or "this is host dns2"
-- name: lets encrypt | create test file with hostname to verify acme endpoint
+- name: Let's Encrypt | create test file with hostname to verify acme endpoint
   ansible.builtin.copy:
     dest: "/var/run/acme/acme-challenge/.well-known/acme-challenge/check.txt"
     content: |
       "this is host {{ inventory_hostname }}"
 
-- name: lets encrypt | copy deploy hook
+- name: Let's Encrypt | copy deploy hook
   ansible.builtin.copy:
     src: letsencrypt-deploy-hook
     dest: /usr/local/sbin/letsencrypt-deploy-hook
@@ -82,7 +82,7 @@
     group: root
     mode: "0755"
 
-- name: lets encrypt | generate renewal script from template
+- name: Let's Encrypt | generate renewal script from template
   ansible.builtin.template:
     src: letsencrypt-renew.j2
     dest: /usr/local/sbin/letsencrypt-renew
@@ -90,7 +90,7 @@
     group: root
     mode: "0755"
 
-- name: lets encrypt | create renewal crob job
+- name: Let's Encrypt | create renewal crob job
   ansible.builtin.cron:
     name: "renew certs periodically"
     user: root
@@ -100,7 +100,7 @@
     job: "/usr/local/sbin/letsencrypt-renew"
   when: inventory_hostname == "dns1"
 
-- name: lets encrypt | create renewal crob job
+- name: Let's Encrypt | create renewal crob job
   ansible.builtin.cron:
     name: "renew certs periodically"
     user: root
@@ -110,7 +110,7 @@
     job: "/usr/local/sbin/letsencrypt-renew"
   when: inventory_hostname == "dns2"
 
-- name: lets encrypt | check if service certificate available
+- name: Let's Encrypt | check if service certificate available
   ansible.builtin.stat:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa"
   register: service_certificate
@@ -118,4 +118,5 @@
 - name: Create Let's Encrypt Certificates, if not existing
   when: not service_certificate.stat.exists
   block:
-    - ansible.builtin.include_tasks: letsencrypt_create.yml
+    - name: Create Let's Encrypt Certificates
+      ansible.builtin.include_tasks: letsencrypt_create.yml

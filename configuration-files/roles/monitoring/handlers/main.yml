@@ -1,5 +1,5 @@
 ---
-- name: restart munin
+- name: Restart munin
   loop:
     - "munin"
     - "munin-node"

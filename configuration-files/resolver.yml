@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Prepare resolver
+  hosts: all
   become: true
   pre_tasks:
     - name: Update Repository Index
@@ -8,7 +9,8 @@
         update_cache: true
       changed_when: false
 
-- hosts: all
+- name: Setup resolver
+  hosts: all
   become: true
   roles:
     - base

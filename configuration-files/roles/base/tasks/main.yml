@@ -15,9 +15,13 @@
     - name: Setup Software
       tags: init
       block:
-        - ansible.builtin.import_tasks: unattended-upgrades.yml
-        - ansible.builtin.import_tasks: software/packages_cleanup.yml
-        - ansible.builtin.import_tasks: software/packages_utilities.yml
+        - name: Setup unattended-upgrades
+          ansible.builtin.import_tasks: unattended-upgrades.yml
+        - name: Cleanup packages
+          ansible.builtin.import_tasks: software/packages_cleanup.yml
+        - name: Setup utilities
+          ansible.builtin.import_tasks: software/packages_utilities.yml
+
     - name: Setup Firewall
       ansible.builtin.import_tasks: firewall.yml
       tags: firewall

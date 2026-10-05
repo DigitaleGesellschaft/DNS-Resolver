@@ -20,4 +20,4 @@
     group: root
     mode: "0644"
   notify:
-    - apply netplan
+    - Apply netplan

@@ -1,12 +1,12 @@
 ---
-- name: munin | install
+- name: Munin | install
   ansible.builtin.package:
     state: latest
     name:
       - munin
       - conntrack
 
-- name: munin | add unbound statistics
+- name: Munin | add unbound statistics
   ansible.builtin.blockinfile:
     path: /etc/munin/plugin-conf.d/munin-node
     block: |
@@ -19,9 +19,9 @@
       [fw_*]
       user root
   notify:
-    - restart munin
+    - Restart munin
 
-- name: munin | make munin less verbose
+- name: Munin | make munin less verbose
   ansible.builtin.lineinfile:
     path: "/etc/munin/munin-node.conf"
     regex: "^(#)?{{ item.key }}"
@@ -30,7 +30,7 @@
   loop:
     - { key: "log_level", value: "0" }
 
-- name: munin | configure symlinks
+- name: Munin | configure symlinks
   ansible.builtin.file:
     src: "/usr/share/munin/plugins/{{ item.from }}"
     dest: "/etc/munin/plugins/{{ item.to }}"
@@ -67,9 +67,9 @@
     - { from: "fw_conntrack", to: "fw_conntrack" }
     - { from: "fw_packets", to: "fw_packets" }
   notify:
-    - restart munin
+    - Restart munin
 
-- name: munin | generate htaccess file
+- name: Munin | generate htaccess file
   ansible.builtin.template:
     src: htpasswd.j2
     dest: /var/cache/munin/www/.htpasswd

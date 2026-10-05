@@ -2,5 +2,7 @@
 - name: Setup DNS Frontend
   tags: frontend
   block:
-    - ansible.builtin.import_tasks: powerdns-repo.yml
-    - ansible.builtin.import_tasks: dnsdist.yml
+    - name: Setup PowerDNS repo
+      ansible.builtin.import_tasks: powerdns-repo.yml
+    - name: Setup dnsdist
+      ansible.builtin.import_tasks: dnsdist.yml

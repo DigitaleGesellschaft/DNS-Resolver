@@ -1,5 +1,5 @@
 ---
-- name: restart unbound
+- name: Restart unbound
   ansible.builtin.service:
     name: unbound
     state: restarted

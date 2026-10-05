@@ -1,12 +1,12 @@
 ---
-- name: firewall | install software
+- name: Firewall | install software
   ansible.builtin.package:
     state: latest
     name:
       - iptables
       - nftables
 
-- name: firewall | uninstall software
+- name: Firewall | uninstall software
   ansible.builtin.package:
     state: absent
     name:
@@ -16,20 +16,20 @@
 
 # Load firewall connection tracking kernel modules and reconnect.
 
-- name: firewall | load kernel modules
+- name: Firewall | load kernel modules
   community.general.modprobe:
     name: xt_conntrack
 
-- name: firewall | reset connection
+- name: Firewall | reset connection
   ansible.builtin.meta: reset_connection
-- name: firewall | cleanup
+- name: Firewall | cleanup
   ansible.builtin.file:
     state: absent
     path: /etc/iptables
 
-- name: firewall | rules
+- name: Firewall | rules
   notify:
-    - firewall | apply ruleset
+    - Firewall | apply ruleset
   ansible.builtin.template:
     src: nftables.conf.j2
     dest: /etc/nftables.conf
@@ -38,7 +38,7 @@
     group: root
     mode: "0644"
 
-- name: firewall | enabled
+- name: Firewall | enabled
   ansible.builtin.service:
     name: nftables
     state: started

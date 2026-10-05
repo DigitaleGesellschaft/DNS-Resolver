@@ -1,5 +1,5 @@
 ---
-- name: software | install utility packages
+- name: Software | install utility packages
   ansible.builtin.package:
     state: latest
     name:

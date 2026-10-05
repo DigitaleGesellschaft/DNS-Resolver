@@ -1,26 +1,26 @@
 ---
-- name: nginx | install
+- name: Nginx | install
   ansible.builtin.package:
     state: latest
     name: nginx
 
-- name: nginx | ensure nginx is started
+- name: Nginx | ensure nginx is started
   ansible.builtin.service:
     name: nginx
     state: started
 
-- name: nginx | webserver configurations | remove default web server configuration
+- name: Nginx | webserver configurations | remove default web server configuration
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
 
-- name: nginx | webserver configurations | create res www folder
+- name: Nginx | webserver configurations | create res www folder
   ansible.builtin.file:
     path: /var/www/res
     state: directory
     mode: "0755"
 
-- name: nginx | webserver configurations | copy index.html
+- name: Nginx | webserver configurations | copy index.html
   ansible.builtin.copy:
     src: index.html
     dest: /var/www/res/index.html
@@ -28,7 +28,7 @@
     group: root
     mode: "0644"
 
-- name: nginx | webserver configurations | generate config files from template
+- name: Nginx | webserver configurations | generate config files from template
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "/etc/nginx/sites-available/{{ item.dest }}"
@@ -40,9 +40,9 @@
     - { src: "res-https.conf.j2", dest: "res-https.conf" }
     - { src: "res.conf.j2", dest: "res.conf" }
   notify:
-    - restart nginx
+    - Restart nginx
 
-- name: nginx | webserver configurations | activate http config files
+- name: Nginx | webserver configurations | activate http config files
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ item.file }}"
     dest: "/etc/nginx/sites-enabled/{{ item.file }}"
@@ -53,14 +53,14 @@
     - { file: "acme.conf" }
     - { file: "res.conf" }
   notify:
-    - restart nginx
+    - Restart nginx
 
-- name: nginx | check if intern certificate available
+- name: Nginx | check if intern certificate available
   ansible.builtin.stat:
     path: "{{ cert_path }}live/{{ name_intern }}.{{ domain }}.ecdsa"
   register: intern_certificate
 
-- name: nginx | webserver configurations | activate https config files
+- name: Nginx | webserver configurations | activate https config files
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/res-https.conf"
     dest: "/etc/nginx/sites-enabled/res-https.conf"
@@ -69,4 +69,4 @@
     state: link
   when: intern_certificate.stat.exists
   notify:
-    - restart nginx
+    - Restart nginx

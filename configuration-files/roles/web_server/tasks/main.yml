@@ -2,8 +2,11 @@
 - name: Setup Webserver
   tags: webserver
   block:
-    - ansible.builtin.import_tasks: nginx.yml
-    - ansible.builtin.import_tasks: letsencrypt.yml
+    - name: Setup nginx
+      ansible.builtin.import_tasks: nginx.yml
+    - name: Setup Let's Encrypt (production)
       when: inventory_hostname in groups["prod"]
-    - ansible.builtin.import_tasks: localencrypt.yml
+      ansible.builtin.import_tasks: letsencrypt.yml
+    - name: Setup self-signed certs (testing)
       when: inventory_hostname in groups["local"]
+      ansible.builtin.import_tasks: localencrypt.yml

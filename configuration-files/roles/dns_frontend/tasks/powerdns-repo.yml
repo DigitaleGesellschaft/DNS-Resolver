@@ -1,5 +1,5 @@
 ---
-- name: powerdns-repo | pinning
+- name: PowerDNS repo | pinning
   ansible.builtin.copy:
     src: dnsdist.pref
     dest: /etc/apt/preferences.d/dnsdist.pref
@@ -7,7 +7,7 @@
     group: root
     mode: "0644"
 
-- name: powerdns-repo | keyring
+- name: PowerDNS repo | keyring
   ansible.builtin.copy:
     src: FD380FBB-pub.asc
     dest: /etc/apt/keyrings/FD380FBB-pub.asc
@@ -15,7 +15,7 @@
     group: root
     mode: "0644"
 
-- name: powerdns-repo | sources
+- name: PowerDNS repo | sources
   ansible.builtin.copy:
     src: dnsdist.sources
     dest: /etc/apt/sources.list.d
@@ -23,6 +23,6 @@
     group: root
     mode: "0644"
 
-- name: powerdns-repo | apt cache up-to-date
+- name: PowerDNS repo | apt cache up-to-date
   ansible.builtin.apt:
     update_cache: true

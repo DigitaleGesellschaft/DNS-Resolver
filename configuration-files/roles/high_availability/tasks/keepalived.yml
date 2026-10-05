@@ -1,15 +1,15 @@
 ---
-- name: keepalived | install
+- name: Keepalived | install
   ansible.builtin.package:
     state: latest
     name: keepalived
 
-- name: keepalived | ensure keepalived is started
+- name: Keepalived | ensure keepalived is started
   ansible.builtin.service:
     name: keepalived
     state: started
 
-- name: keepalived | generate config file from template
+- name: Keepalived | generate config file from template
   ansible.builtin.template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
@@ -17,4 +17,4 @@
     group: root
     mode: "0644"
   notify:
-    - reload keepalived
+    - Reload keepalived

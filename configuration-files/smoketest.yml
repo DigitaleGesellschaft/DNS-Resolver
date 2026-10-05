@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Smoketest
+  hosts: all
   become: false
   gather_facts: false
   vars:

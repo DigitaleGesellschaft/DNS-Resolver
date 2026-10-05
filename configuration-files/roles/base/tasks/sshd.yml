@@ -3,7 +3,7 @@
 # ubuntu releases where the socket unit is not present. Note that the drop-in
 # is installed regardless of the result here. This is done to ensure ssh will
 # start on the correct port after a dist-upgrade.
-- name: ssh | check if systemd ssh.socket unit is active
+- name: SSH | check if systemd ssh.socket unit is active
   changed_when: false
   failed_when: false
   register: ssh_socket_is_active
@@ -13,7 +13,7 @@
       - is-active
       - ssh.socket
 
-- name: ssh | systemd ssh.socket unit drop-in directory present
+- name: SSH | systemd ssh.socket unit drop-in directory present
   ansible.builtin.file:
     state: directory
     path: /etc/systemd/system/ssh.socket.d
@@ -21,9 +21,9 @@
     group: root
     mode: "0755"
 
-- name: ssh | systemd ssh.socket unit drop-in present
+- name: SSH | systemd ssh.socket unit drop-in present
   notify:
-    - restart ssh.socket
+    - Restart ssh.socket
   ansible.builtin.copy:
     content: |
       [Socket]
@@ -35,7 +35,7 @@
     group: root
     mode: "0644"
 
-- name: ssh | configure sshd
+- name: SSH | configure sshd
   ansible.builtin.lineinfile:
     path: "/etc/ssh/sshd_config"
     regex: "^(#)?{{ item.key }}"
@@ -54,4 +54,4 @@
     - { key: "Port", value: "{{ network_port_ssh }}" } # use custom listening port
     - { key: "X11Forwarding", value: "no" } # disable unused X11 forwarding, console access only
   notify:
-    - restart ssh
+    - Restart ssh
