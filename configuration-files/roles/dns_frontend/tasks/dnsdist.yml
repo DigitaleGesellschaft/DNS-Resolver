@@ -6,7 +6,7 @@
 
 - name: dnsdist | check if service certificate available
   ansible.builtin.stat:
-    path: "{{ cert_path}}live/{{ host_public }}.{{ domain }}.ecdsa/"
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/"
   register: service_certificate
 
 - name: "dnsdist | ensure dnsdist is {{ not service_certificate.stat.exists | ternary('masked', 'not masked') }}"

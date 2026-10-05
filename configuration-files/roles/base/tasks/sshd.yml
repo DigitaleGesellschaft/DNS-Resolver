@@ -38,8 +38,8 @@
 - name: ssh | configure sshd
   ansible.builtin.lineinfile:
     path: "/etc/ssh/sshd_config"
-    regex: "^(#)?{{item.key}}"
-    line: "{{item.key}} {{item.value}}"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
     - { key: "AllowAgentForwarding", value: "no" } # disable tunneling feature

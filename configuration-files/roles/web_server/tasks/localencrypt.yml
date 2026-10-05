@@ -6,8 +6,8 @@
     mode: "0755"
   loop:
     - { name: "{{ name_intern }}.{{ domain }}.ecdsa" }
-    - { name: "{{ host_public}}.{{ domain }}.ecdsa" }
-    - { name: "{{ host_public}}.{{ domain }}.rsa" }
+    - { name: "{{ host_public }}.{{ domain }}.ecdsa" }
+    - { name: "{{ host_public }}.{{ domain }}.rsa" }
 
 - name: Create private keys (without passphrase)
   community.crypto.openssl_privatekey:
@@ -19,8 +19,8 @@
     mode: "0640"
   loop:
     - { type: "ECC", curve: "secp256r1", name: "{{ name_intern }}.{{ domain }}.ecdsa" }
-    - { type: "ECC", curve: "secp256r1", name: "{{ host_public}}.{{ domain }}.ecdsa" }
-    - { type: "RSA", name: "{{ host_public}}.{{ domain }}.rsa" }
+    - { type: "ECC", curve: "secp256r1", name: "{{ host_public }}.{{ domain }}.ecdsa" }
+    - { type: "RSA", name: "{{ host_public }}.{{ domain }}.rsa" }
 
 - name: Check if RSA public PEM certificate file exists
   ansible.builtin.stat:
@@ -39,8 +39,8 @@
 
 - name: Create public ECDSA certificate signing request (CSR)
   community.crypto.openssl_csr_pipe:
-    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/privkey.pem"
-    common_name: "{{ host_public}}.{{ domain }}.ecdsa"
+    privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
+    common_name: "{{ host_public }}.{{ domain }}.ecdsa"
     organization_name: "Digitale Gesellschaft"
     subject_alt_name:
       - "DNS:{{ host_public }}.{{ domain }}"
@@ -51,16 +51,16 @@
 
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
-    path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/fullchain.pem"
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/fullchain.pem"
     csr_content: "{{ csr.csr }}"
-    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.ecdsa/privkey.pem"
+    privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/privkey.pem"
     provider: selfsigned
   when: not pub_ecdsa_check.stat.exists
 
 - name: Create public RSA certificate signing request (CSR)
   community.crypto.openssl_csr_pipe:
-    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/privkey.pem"
-    common_name: "{{ host_public}}.{{ domain }}.rsa"
+    privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"
+    common_name: "{{ host_public }}.{{ domain }}.rsa"
     organization_name: "Digitale Gesellschaft"
     subject_alt_name:
       - "DNS:{{ host_public }}.{{ domain }}"
@@ -71,9 +71,9 @@
 
 - name: Create public self-signed certificate from CSR
   community.crypto.x509_certificate:
-    path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/fullchain.pem"
+    path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/fullchain.pem"
     csr_content: "{{ csr.csr }}"
-    privatekey_path: "{{ cert_path }}live/{{ host_public}}.{{ domain }}.rsa/privkey.pem"
+    privatekey_path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.rsa/privkey.pem"
     provider: selfsigned
   when: not pub_rsa_check.stat.exists
 

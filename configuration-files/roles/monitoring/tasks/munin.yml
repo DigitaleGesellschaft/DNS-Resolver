@@ -24,8 +24,8 @@
 - name: munin | make munin less verbose
   ansible.builtin.lineinfile:
     path: "/etc/munin/munin-node.conf"
-    regex: "^(#)?{{item.key}}"
-    line: "{{item.key}} {{item.value}}"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
     - { key: "log_level", value: "0" }
