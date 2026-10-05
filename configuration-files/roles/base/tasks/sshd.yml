@@ -6,7 +6,7 @@
 - name: SSH | check if systemd ssh.socket unit is active
   changed_when: false
   failed_when: false
-  register: ssh_socket_is_active
+  register: base_ssh_socket_is_active
   ansible.builtin.command:
     argv:
       - /usr/bin/systemctl

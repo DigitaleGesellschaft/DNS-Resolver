@@ -7,12 +7,12 @@
 - name: PowerDNS dnsdist | check if service certificate available
   ansible.builtin.stat:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa/"
-  register: service_certificate
+  register: dns_frontend_certificate
 
-- name: "PowerDNS dnsdist | ensure dnsdist is {{ not service_certificate.stat.exists | ternary('masked', 'not masked') }}"
+- name: "PowerDNS dnsdist | ensure dnsdist is {{ not dns_frontend_certificate.stat.exists | ternary('masked', 'not masked') }}"
   ansible.builtin.systemd_service:
     name: dnsdist
-    masked: "{{ not service_certificate.stat.exists }}"
+    masked: "{{ not dns_frontend_certificate.stat.exists }}"
 
 - name: PowerDNS dnsdist | generate config file from template
   ansible.builtin.template:
@@ -21,7 +21,7 @@
     owner: root
     group: _dnsdist
     mode: "0644"
-  when: service_certificate.stat.exists
+  when: dns_frontend_certificate.stat.exists
   notify:
     - Restart dnsdist
 
@@ -29,7 +29,7 @@
   ansible.builtin.file:
     state: absent
     dest: /etc/dnsdist/dnsdist.conf
-  when: service_certificate.stat.exists
+  when: dns_frontend_certificate.stat.exists
   notify:
     - Restart dnsdist
 
@@ -37,4 +37,4 @@
   ansible.builtin.service:
     name: dnsdist
     state: started
-  when: service_certificate.stat.exists
+  when: dns_frontend_certificate.stat.exists

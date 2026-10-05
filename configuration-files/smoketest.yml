@@ -129,9 +129,9 @@
       delegate_to: 127.0.0.1
       when: ip4 == ip4_dns1
       changed_when: false
-      register: async_poll_results
-      until: async_poll_results is finished
-      failed_when: "async_poll_results.rc > 200"
+      register: smoketest_async_poll_results
+      until: smoketest_async_poll_results is finished
+      failed_when: "smoketest_async_poll_results.rc > 200"
       retries: 300
       ansible.builtin.async_status:
         jid: "{{ async_result_item.ansible_job_id }}"

@@ -1,6 +1,6 @@
 ---
 - name: Restart ssh.socket
-  when: ssh_socket_is_active.rc == 0
+  when: base_ssh_socket_is_active.rc == 0
   ansible.builtin.systemd_service:
     name: ssh.socket
     state: restarted
