@@ -7,24 +7,24 @@
   changed_when: false
   failed_when: false
   register: ssh_socket_is_active
-  command:
+  ansible.builtin.command:
     argv:
       - /usr/bin/systemctl
       - is-active
       - ssh.socket
 
 - name: ssh | systemd ssh.socket unit drop-in directory present
-  file:
+  ansible.builtin.file:
     state: directory
     path: /etc/systemd/system/ssh.socket.d
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: ssh | systemd ssh.socket unit drop-in present
   notify:
     - restart ssh.socket
-  copy:
+  ansible.builtin.copy:
     content: |
       [Socket]
       ListenStream=
@@ -33,10 +33,10 @@
     dest: /etc/systemd/system/ssh.socket.d/50-port.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: ssh | configure sshd
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/ssh/sshd_config"
     regex: "^(#)?{{item.key}}"
     line: "{{item.key}} {{item.value}}"

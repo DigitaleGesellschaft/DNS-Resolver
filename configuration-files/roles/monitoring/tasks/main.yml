@@ -2,4 +2,4 @@
 - name: Setup Monitoring
   tags: monitoring
   block:
-    - import_tasks: munin.yml
+    - ansible.builtin.import_tasks: munin.yml

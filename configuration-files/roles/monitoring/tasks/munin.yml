@@ -1,13 +1,13 @@
 ---
 - name: munin | install
-  package:
+  ansible.builtin.package:
     state: latest
     name:
       - munin
       - conntrack
 
 - name: munin | add unbound statistics
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/munin/plugin-conf.d/munin-node
     block: |
       [unbound*]
@@ -22,7 +22,7 @@
     - restart munin
 
 - name: munin | make munin less verbose
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/munin/munin-node.conf"
     regex: "^(#)?{{item.key}}"
     line: "{{item.key}} {{item.value}}"
@@ -31,7 +31,7 @@
     - { key: "log_level", value: "0" }
 
 - name: munin | configure symlinks
-  file:
+  ansible.builtin.file:
     src: "/usr/share/munin/plugins/{{ item.from }}"
     dest: "/etc/munin/plugins/{{ item.to }}"
     state: link
@@ -70,7 +70,7 @@
     - restart munin
 
 - name: munin | generate htaccess file
-  template:
+  ansible.builtin.template:
     src: htpasswd.j2
     dest: /var/cache/munin/www/.htpasswd
     owner: root

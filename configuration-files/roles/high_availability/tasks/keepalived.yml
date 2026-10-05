@@ -1,16 +1,16 @@
 ---
 - name: keepalived | install
-  package:
+  ansible.builtin.package:
     state: latest
     name: keepalived
 
 - name: keepalived | ensure keepalived is started
-  service:
+  ansible.builtin.service:
     name: keepalived
     state: started
 
 - name: keepalived | generate config file from template
-  template:
+  ansible.builtin.template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
     owner: root

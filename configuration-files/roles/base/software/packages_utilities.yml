@@ -1,6 +1,6 @@
 ---
 - name: software | install utility packages
-  package:
+  ansible.builtin.package:
     state: latest
     name:
       - curl

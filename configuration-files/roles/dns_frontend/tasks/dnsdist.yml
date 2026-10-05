@@ -1,21 +1,21 @@
 ---
 - name: dnsdist | install
-  package:
+  ansible.builtin.package:
     state: latest
     name: dnsdist
 
 - name: dnsdist | check if service certificate available
-  stat:
+  ansible.builtin.stat:
     path: "{{ cert_path}}live/{{ host_public }}.{{ domain }}.ecdsa/"
   register: service_certificate
 
 - name: "dnsdist | ensure dnsdist is {{ not service_certificate.stat.exists | ternary('masked', 'not masked') }}"
-  systemd_service:
+  ansible.builtin.systemd_service:
     name: dnsdist
     masked: "{{ not service_certificate.stat.exists }}"
 
 - name: dnsdist | generate config file from template
-  template:
+  ansible.builtin.template:
     src: dnsdist.yml.j2
     dest: /etc/dnsdist/dnsdist.yml
     owner: root
@@ -26,7 +26,7 @@
     - restart dnsdist
 
 - name: dnsdist | remove legacy config file
-  file:
+  ansible.builtin.file:
     state: absent
     dest: /etc/dnsdist/dnsdist.conf
   when: service_certificate.stat.exists
@@ -34,7 +34,7 @@
     - restart dnsdist
 
 - name: dnsdist | ensure dnsdist is started
-  service:
+  ansible.builtin.service:
     name: dnsdist
     state: started
   when: service_certificate.stat.exists

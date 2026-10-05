@@ -4,16 +4,16 @@
     - all
     - default
     - "{{ if_primary }}"
-  sysctl:
+  ansible.posix.sysctl:
     name: "net.ipv6.conf.{{ item }}.accept_dad"
-    value: '0'
+    value: "0"
     sysctl_set: true
     sysctl_file: /etc/sysctl.d/99-disable-dad-ipv6.conf
     state: present
     reload: true
 
 - name: Generate network config file from template
-  template:
+  ansible.builtin.template:
     src: 00-installer-config.yaml.j2
     dest: /etc/netplan/00-installer-config.yaml
     owner: root

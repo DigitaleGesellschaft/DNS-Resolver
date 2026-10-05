@@ -3,6 +3,6 @@
   loop:
     - "munin"
     - "munin-node"
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: restarted

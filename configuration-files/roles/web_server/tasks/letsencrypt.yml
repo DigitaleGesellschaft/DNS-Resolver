@@ -5,7 +5,7 @@
     classic: true
 
 - name: lets encrypt | symlink certbot
-  file:
+  ansible.builtin.file:
     src: "/snap/bin/certbot"
     dest: "/usr/bin/certbot"
     owner: root
@@ -13,13 +13,13 @@
     state: link
 
 - name: Create cert directory
-  file:
+  ansible.builtin.file:
     path: "{{ cert_path }}live/"
     state: directory
     mode: "0755"
 
 - name: lets encrypt | create config dir
-  file:
+  ansible.builtin.file:
     path: "{{ cert_path }}"
     state: directory
     owner: root
@@ -27,7 +27,7 @@
     mode: "0755"
 
 - name: lets encrypt | create config accounts sub dir
-  file:
+  ansible.builtin.file:
     path: "{{ cert_path }}accounts"
     state: directory
     owner: root
@@ -35,7 +35,7 @@
     mode: "0700"
 
 - name: lets encrypt | create config sub dir
-  file:
+  ansible.builtin.file:
     path: "{{ cert_path }}{{ item.file }}"
     state: directory
     owner: root
@@ -48,7 +48,7 @@
     - { file: "renewal-hooks" }
 
 - name: lets encrypt | copy cli config
-  copy:
+  ansible.builtin.copy:
     src: cli.ini
     dest: "{{ cert_path }}cli.ini"
     owner: root
@@ -56,7 +56,7 @@
     mode: "0644"
 
 - name: lets encrypt | create acme well known dir
-  file:
+  ansible.builtin.file:
     path: /var/run/acme/acme-challenge/.well-known/acme-challenge
     state: directory
     owner: root
@@ -69,13 +69,13 @@
 # curl http://dns2.digitale-gesellschaft.ch/.well-known/acme-challenge/check.txt
 # returns either "this is host dns1" or "this is host dns2"
 - name: lets encrypt | create test file with hostname to verify acme endpoint
-  copy:
+  ansible.builtin.copy:
     dest: "/var/run/acme/acme-challenge/.well-known/acme-challenge/check.txt"
     content: |
       "this is host {{ inventory_hostname }}"
 
 - name: lets encrypt | copy deploy hook
-  copy:
+  ansible.builtin.copy:
     src: letsencrypt-deploy-hook
     dest: /usr/local/sbin/letsencrypt-deploy-hook
     owner: root
@@ -83,7 +83,7 @@
     mode: "0755"
 
 - name: lets encrypt | generate renewal script from template
-  template:
+  ansible.builtin.template:
     src: letsencrypt-renew.j2
     dest: /usr/local/sbin/letsencrypt-renew
     owner: root
@@ -91,7 +91,7 @@
     mode: "0755"
 
 - name: lets encrypt | create renewal crob job
-  cron:
+  ansible.builtin.cron:
     name: "renew certs periodically"
     user: root
     weekday: "3"
@@ -101,7 +101,7 @@
   when: inventory_hostname == "dns1"
 
 - name: lets encrypt | create renewal crob job
-  cron:
+  ansible.builtin.cron:
     name: "renew certs periodically"
     user: root
     weekday: "4"
@@ -111,11 +111,11 @@
   when: inventory_hostname == "dns2"
 
 - name: lets encrypt | check if service certificate available
-  stat:
+  ansible.builtin.stat:
     path: "{{ cert_path }}live/{{ host_public }}.{{ domain }}.ecdsa"
   register: service_certificate
 
 - name: Create Let's Encrypt Certificates, if not existing
   block:
-    - include_tasks: letsencrypt_create.yml
+    - ansible.builtin.include_tasks: letsencrypt_create.yml
   when: not service_certificate.stat.exists

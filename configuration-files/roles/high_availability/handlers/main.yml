@@ -1,5 +1,5 @@
 ---
 - name: reload keepalived
-  service:
+  ansible.builtin.service:
     name: keepalived
     state: reloaded

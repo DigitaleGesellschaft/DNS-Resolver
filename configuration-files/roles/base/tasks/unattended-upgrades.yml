@@ -1,11 +1,11 @@
 ---
 - name: unattended-upgrades | install
-  package:
+  ansible.builtin.package:
     state: latest
     name: unattended-upgrades
 
 - name: unattended-upgrades | ensure service is enabled and running
-  service:
+  ansible.builtin.service:
     name: unattended-upgrades
     state: started
-    enabled: yes
+    enabled: true

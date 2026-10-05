@@ -4,4 +4,3 @@ vip_interfaces:
   - "[{{ ip6_vip_dns1 }}]"
   - "{{ ip4_vip_dns2 }}"
   - "[{{ ip6_vip_dns2 }}]"
-

@@ -1,12 +1,12 @@
 ---
 - name: unbound | disable ubuntu systemd-resolved
-  service:
+  ansible.builtin.service:
     name: systemd-resolved
     state: stopped
     enabled: false
 
 - name: unbound | configure system to use unbound resolver
-  template:
+  ansible.builtin.template:
     src: resolv.conf.j2
     dest: /etc/resolv.conf
     owner: root
