@@ -1,0 +1,47 @@
+---
+- name: Metrics | Node Exporter | Package present
+  ansible.builtin.package:
+    state: present
+    name:
+      - prometheus-node-exporter
+      - prometheus-node-exporter-collectors
+
+- name: Metrics | Node Exporter | Directories present
+  loop:
+    - /etc/prometheus/scrape-configs.d
+    - /usr/local/lib/systemd/system
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Metrics | Node Exporter | Scrape config present
+  ansible.builtin.template:
+    src: etc/prometheus/scrape-configs.d/node-exporter.yml.j2
+    dest: /etc/prometheus/scrape-configs.d/node-exporter.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Node Exporter | Service unit present
+  loop:
+    - usr/local/lib/systemd/system/prometheus-node-exporter-needrestart.service
+    - usr/local/lib/systemd/system/prometheus-node-exporter-needrestart.timer
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Node Exporter | Service enabled
+  loop:
+    - prometheus-node-exporter-needrestart.timer
+    - prometheus-node-exporter.service
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: started
+    daemon_reload: true
+    enabled: true

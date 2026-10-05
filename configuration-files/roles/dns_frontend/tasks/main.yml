@@ -4,3 +4,5 @@
   block:
     - import_tasks: powerdns-repo.yml
     - import_tasks: dnsdist.yml
+    - name: Setup dndsdist metrics
+      ansible.builtin.import_tasks: dnsdist-metrics.yml

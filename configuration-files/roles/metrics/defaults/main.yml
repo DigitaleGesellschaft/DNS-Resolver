@@ -1,0 +1,6 @@
+---
+metrics_remote_write_enabled: false
+metrics_remote_write_url: ""
+metrics_remote_write_username: ""
+metrics_remote_write_password: ""
+metrics_instance_name: "{{ inventory_hostname }}"

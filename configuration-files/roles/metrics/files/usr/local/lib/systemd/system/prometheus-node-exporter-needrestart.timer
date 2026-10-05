@@ -1,0 +1,9 @@
+[Unit]
+Description=Run needrestart metrics collection every 15 minutes
+
+[Timer]
+OnBootSec=0
+OnUnitActiveSec=15min
+
+[Install]
+WantedBy=timers.target

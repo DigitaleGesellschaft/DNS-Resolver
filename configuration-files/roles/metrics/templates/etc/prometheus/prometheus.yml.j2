@@ -1,0 +1,10 @@
+{% if metrics_remote_write_enabled %}
+remote_write:
+  - url: "{{ metrics_remote_write_url }}"
+    basic_auth:
+      username: "{{ metrics_remote_write_username }}"
+      password_file: /run/credentials/prometheus.service/prometheus-remote-write-password
+{% endif %}
+
+scrape_config_files:
+  - "/etc/prometheus/scrape-configs.d/*.yml"
