@@ -1,22 +1,23 @@
 ---
-- name: restart ssh.socket
-  when: ssh_socket_is_active.rc == 0
-  systemd_service:
+- name: Restart ssh.socket
+  when: base_ssh_socket_is_active.rc == 0
+  ansible.builtin.systemd_service:
     name: ssh.socket
     state: restarted
     daemon_reload: true
 
-- name: restart ssh
-  service:
+- name: Restart ssh
+  ansible.builtin.service:
     name: ssh
     state: restarted
 
-- name: firewall | apply ruleset
-  systemd_service:
+- name: Firewall | apply ruleset
+  ansible.builtin.systemd_service:
     name: nftables
     state: reloaded
 
-- name: apply netplan
-  command: sudo netplan apply
+- name: Apply netplan
   async: 45
   poll: 0
+  changed_when: true
+  ansible.builtin.command: netplan apply

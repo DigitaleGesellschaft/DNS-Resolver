@@ -1,0 +1,7 @@
+# This file contains ignores rule violations for ansible-lint
+roles/base/defaults/main.yml var-naming[no-role-prefix]
+roles/dns_backend/defaults/main.yml var-naming[no-role-prefix]
+roles/dns_backend/vars/main.yml var-naming[no-role-prefix]
+roles/dns_frontend/defaults/main.yml var-naming[no-role-prefix]
+roles/dns_frontend/vars/main.yml var-naming[no-role-prefix]
+roles/monitoring/vars/main.yml var-naming[no-role-prefix]

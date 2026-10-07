@@ -2,4 +2,5 @@
 - name: Setup High Availability
   tags: highavailability
   block:
-    - import_tasks: keepalived.yml
+    - name: Setup keepalived
+      ansible.builtin.import_tasks: keepalived.yml

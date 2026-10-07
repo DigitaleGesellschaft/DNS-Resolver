@@ -1,38 +1,38 @@
 ---
-- name: unbound | install
-  package:
-    state: latest
+- name: Unbound | install
+  ansible.builtin.package:
+    state: present
     name: unbound
 
-- name: unbound | increase socket buffer size
+- name: Unbound | increase socket buffer size
   loop:
     - rmem_max
     - wmem_max
-  sysctl:
+  ansible.posix.sysctl:
     name: "net.core.{{ item }}"
-    value: '8388608'
+    value: "8388608"
     sysctl_set: true
     sysctl_file: /etc/sysctl.d/99-socket-buffer-size.conf
     state: present
     reload: true
 
-- name: unbound | started
-  service:
+- name: Unbound | started
+  ansible.builtin.service:
     name: unbound
     state: started
 
-- name: unbound | control key present
-  command:
+- name: Unbound | control key present
+  ansible.builtin.command:
     argv:
       - /usr/sbin/unbound-control-setup
     creates: /etc/unbound/unbound_server.pem
 
-- name: unbound | generate config file from template
-  template:
+- name: Unbound | generate config file from template
+  ansible.builtin.template:
     src: unbound.conf.j2
     dest: /etc/unbound/unbound.conf
     owner: root
     group: unbound
     mode: "0644"
   notify:
-    - restart unbound
+    - Restart unbound

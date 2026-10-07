@@ -1,7 +1,7 @@
 ---
-- name: software | install utility packages
-  package:
-    state: latest
+- name: Software | install utility packages
+  ansible.builtin.package:
+    state: present
     name:
       - curl
       - dnsutils
