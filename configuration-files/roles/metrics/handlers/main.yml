@@ -1,0 +1,5 @@
+---
+- name: Metrics | Prometheus Server | Reload
+  ansible.builtin.systemd_service:
+    name: prometheus
+    state: reloaded

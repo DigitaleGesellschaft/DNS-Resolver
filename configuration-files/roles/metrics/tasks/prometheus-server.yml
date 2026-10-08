@@ -1,0 +1,62 @@
+---
+- name: Metrics | Prometheus Server | Package present
+  ansible.builtin.package:
+    state: present
+    name:
+      - prometheus
+
+- name: Metrics | Prometheus Server | Directories present
+  loop:
+    - /etc/prometheus/scrape-configs.d
+    - /usr/local/lib/systemd/system/prometheus.service.d
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Metrics | Prometheus Server | Systemd credentials present
+  loop:
+    - key: prometheus-remote-write-password
+      value: "{{ metrics_remote_write_password }}"
+  when: metrics_remote_write_enabled
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "/etc/credstore/{{ item.key }}"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Metrics | Prometheus Server | Service drop-in present
+  when: metrics_remote_write_enabled
+  ansible.builtin.copy:
+    src: usr/local/lib/systemd/system/prometheus.service.d/remote-write-credentials.conf
+    dest: /usr/local/lib/systemd/system/prometheus.service.d/remote-write-credentials.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Prometheus Server | Main config present
+  notify:
+    - Metrics | Prometheus Server | Reload
+  ansible.builtin.template:
+    src: etc/prometheus/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Prometheus Server | Scrape config present
+  ansible.builtin.template:
+    src: etc/prometheus/scrape-configs.d/prometheus-server.yml.j2
+    dest: /etc/prometheus/scrape-configs.d/prometheus-server.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Prometheus Server | Service enabled
+  ansible.builtin.systemd_service:
+    name: prometheus
+    state: started
+    enabled: true

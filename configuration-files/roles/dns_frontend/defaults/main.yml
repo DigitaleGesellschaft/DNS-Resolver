@@ -4,3 +4,4 @@ dnsdist_nof_thread_doh_per_ip: 3
 dnsdist_nof_thread_doh3_per_ip: 3
 dnsdist_nof_thread_doq_per_ip: 3
 dnsdist_nof_thread_upstream: 4
+dns_frontend_metrics_instance_name: "{{ metrics_instance_name | default(inventory_hostname) }}"
