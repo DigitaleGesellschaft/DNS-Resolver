@@ -6,26 +6,15 @@
       - prometheus-node-exporter
       - prometheus-node-exporter-collectors
 
-- name: Metrics | Node Exporter | Directories present
-  loop:
-    - /etc/prometheus/scrape-configs.d
-    - /usr/local/lib/systemd/system
+- name: Metrics | Node Exporter | Systemd local system unit directory present
   ansible.builtin.file:
     state: directory
-    path: "{{ item }}"
+    path: "/usr/local/lib/systemd/system"
     owner: root
     group: root
     mode: "0755"
 
-- name: Metrics | Node Exporter | Scrape config present
-  ansible.builtin.template:
-    src: etc/prometheus/scrape-configs.d/node-exporter.yml.j2
-    dest: /etc/prometheus/scrape-configs.d/node-exporter.yml
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Metrics | Node Exporter | Service unit present
+- name: Metrics | Node Exporter | Systemd needrestart service unit present
   loop:
     - usr/local/lib/systemd/system/prometheus-node-exporter-needrestart.service
     - usr/local/lib/systemd/system/prometheus-node-exporter-needrestart.timer

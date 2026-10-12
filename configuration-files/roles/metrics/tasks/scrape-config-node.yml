@@ -1,0 +1,11 @@
+---
+
+- name: Metrics | Scrape Config Node | Present
+  notify:
+    - Metrics | Prometheus Server | Reload
+  ansible.builtin.template:
+    src: etc/prometheus/scrape-configs.d/node-exporter.yml.j2
+    dest: /etc/prometheus/scrape-configs.d/node-exporter.yml
+    owner: root
+    group: root
+    mode: "0644"

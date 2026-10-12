@@ -2,8 +2,18 @@
 - name: Setup Metrics
   tags: metrics
   block:
+
     - name: Setup Prometheus
       ansible.builtin.import_tasks: prometheus-server.yml
 
     - name: Setup Node Exporter
       ansible.builtin.import_tasks: node-exporter.yml
+
+    - name: Setup Common Scrape Configs
+      ansible.builtin.import_tasks: scrape-config-common.yml
+
+    - name: Setup Prometheus Scrape Configs
+      ansible.builtin.import_tasks: scrape-config-prometheus.yml
+
+    - name: Setup Node Exporter Scrape Configs
+      ansible.builtin.import_tasks: scrape-config-node.yml

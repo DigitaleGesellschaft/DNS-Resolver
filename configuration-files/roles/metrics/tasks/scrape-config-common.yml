@@ -1,0 +1,11 @@
+---
+
+- name: Metrics | Scrape Config | Directories present
+  loop:
+    - /etc/prometheus/scrape-configs.d
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: "0755"

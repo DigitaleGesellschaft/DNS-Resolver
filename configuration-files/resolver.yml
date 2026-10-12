@@ -18,3 +18,4 @@
     - web_server
     - monitoring
     - metrics
+    - metrics_dnsdist
