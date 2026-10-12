@@ -9,6 +9,7 @@ StandardOutput=truncate:/var/lib/prometheus/node-exporter/needrestart.prom
 
 # Hardening
 NoNewPrivileges=true
+PrivateNetwork=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true

@@ -1,0 +1,199 @@
+---
+metrics:
+  global:
+    scrape_interval: 15s
+    remote_write:
+      - url: ${PROBE_REMOTE_URL}
+        basic_auth:
+          username: ${PROBE_NAME}
+          password: ${PROBE_PASSWORD}
+          password_file: ${PROBE_PASSWORD_FILE}
+
+integrations:
+  blackbox:
+    enabled: true
+    instance: ${PROBE_NAME}
+    blackbox_targets:
+      - name: dns1_doh_ip6_txt
+        module: doh_ip6_txt
+        address: "https://[2a05:fc84::42]/dns-query?dns=AAABIAABAAAAAAAAA3R4dBA0S0V4U2VaT1JMQ1UwU0R4BHRlc3QAABAAAQ=="
+      - name: dns2_doh_ip6_txt
+        module: doh_ip6_txt
+        address: "https://[2a05:fc84::43]/dns-query?dns=AAABIAABAAAAAAAAA3R4dBA0S0V4U2VaT1JMQ1UwU0R4BHRlc3QAABAAAQ=="
+
+      - name: dns1_doh_ip4_txt
+        module: doh_ip4_txt
+        address: "https://185.95.218.42/dns-query?dns=AAABIAABAAAAAAAAA3R4dBA0S0V4U2VaT1JMQ1UwU0R4BHRlc3QAABAAAQ=="
+      - name: dns2_doh_ip4_txt
+        module: doh_ip4_txt
+        address: "https://185.95.218.43/dns-query?dns=AAABIAABAAAAAAAAA3R4dBA0S0V4U2VaT1JMQ1UwU0R4BHRlc3QAABAAAQ=="
+
+      - name: dns1_dot_ip6_txt
+        module: dot_ip6_txt
+        address: "2a05:fc84::42"
+      - name: dns2_dot_ip6_txt
+        module: dot_ip6_txt
+        address: "2a05:fc84::43"
+      - name: dns1_dot_ip6_tcp
+        module: dot_ip6_tcp
+        address: "2a05:fc84::42"
+      - name: dns2_dot_ip6_tcp
+        module: dot_ip6_tcp
+        address: "2a05:fc84::43"
+      - name: dns1_dot_ip6_nx
+        module: dot_ip6_nx
+        address: "2a05:fc84::42"
+      - name: dns2_dot_ip6_nx
+        module: dot_ip6_nx
+        address: "2a05:fc84::43"
+
+      - name: dns1_dot_ip4_txt
+        module: dot_ip4_txt
+        address: "185.95.218.42"
+      - name: dns2_dot_ip4_txt
+        module: dot_ip4_txt
+        address: "185.95.218.43"
+      - name: dns1_dot_ip4_tcp
+        module: dot_ip4_tcp
+        address: "185.95.218.42"
+      - name: dns2_dot_ip4_tcp
+        module: dot_ip4_tcp
+        address: "185.95.218.43"
+      - name: dns1_dot_ip4_nx
+        module: dot_ip4_nx
+        address: "185.95.218.42"
+      - name: dns2_dot_ip4_nx
+        module: dot_ip4_nx
+        address: "185.95.218.43"
+
+    blackbox_config:
+      modules:
+        doh_ip6_txt:
+          prober: http
+          http:
+            preferred_ip_protocol: ip6
+            ip_protocol_fallback: false
+            headers:
+              accept: application/dns-message
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            fail_if_body_not_matches_regexp:
+              - "txt.4KExSeZORLCU0SDx.test"
+              - "hello world"
+
+        doh_ip4_txt:
+          prober: http
+          http:
+            preferred_ip_protocol: ip4
+            ip_protocol_fallback: false
+            headers:
+              accept: application/dns-message
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            fail_if_body_not_matches_regexp:
+              - "txt.4KExSeZORLCU0SDx.test"
+              - "hello world"
+
+        dot_ip6_txt:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip6
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "txt.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NOERROR
+            validate_answer_rrs:
+              fail_if_not_matches_regexp:
+                - "hello world"
+
+        dot_ip6_tcp:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip6
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "1k-rnd.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NOERROR
+            validate_answer_rrs:
+              fail_if_not_matches_regexp:
+                - "rand=Uzf2VgW1JJw"
+
+        dot_ip6_nx:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip6
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "nx.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NXDOMAIN
+
+        dot_ip4_txt:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip4
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "txt.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NOERROR
+            validate_answer_rrs:
+              fail_if_not_matches_regexp:
+                - "hello world"
+
+        dot_ip4_tcp:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip4
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "1k-rnd.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NOERROR
+            validate_answer_rrs:
+              fail_if_not_matches_regexp:
+                - "rand=Uzf2VgW1JJw"
+
+        dot_ip4_nx:
+          prober: dns
+          dns:
+            preferred_ip_protocol: ip4
+            ip_protocol_fallback: false
+            transport_protocol: tcp
+            dns_over_tls: true
+            tls_config:
+              server_name: dns.digitale-gesellschaft.ch
+
+            query_name: "nx.4KExSeZORLCU0SDx.test"
+            query_type: "TXT"
+            valid_rcodes:
+              - NXDOMAIN
