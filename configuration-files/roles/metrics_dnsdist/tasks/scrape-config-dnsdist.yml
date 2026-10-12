@@ -6,6 +6,7 @@
       value: "{{ dnsdist_webserver_password }}"
   notify:
     - Metrics | Prometheus Server | Restart
+  no_log: true
   ansible.builtin.copy:
     content: "{{ item.value }}"
     dest: "/etc/credstore/{{ item.key }}"

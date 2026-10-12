@@ -18,6 +18,7 @@
     - key: prometheus-remote-write-password
       value: "{{ metrics_remote_write_password }}"
   when: metrics_remote_write_enabled
+  no_log: true
   ansible.builtin.copy:
     content: "{{ item.value }}"
     dest: "/etc/credstore/{{ item.key }}"
