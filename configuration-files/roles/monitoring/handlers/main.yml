@@ -1,8 +1,8 @@
 ---
-- name: restart munin
+- name: Restart munin
   loop:
     - "munin"
     - "munin-node"
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: restarted
