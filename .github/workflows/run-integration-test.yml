@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Override libvirt socket permissions
         run: |
@@ -31,7 +31,7 @@ jobs:
           xz-utils
 
       - name: Setup Tofu
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
         with:
           tofu_version: latest
 
@@ -66,7 +66,7 @@ jobs:
       - name: Prepare ansible
         run: |
           install -m 0644 .github/workflow-templates/ci-vault.yml configuration-files/group_vars/local/vault.yml
-          ansible-galaxy install -f -r requirements.yml
+          ansible-galaxy install -f -r configuration-files/requirements.yml
 
       - name: Run ansible
         run: |
@@ -93,7 +93,7 @@ jobs:
           git diff .github/workflow-fixtures/testssl-results
 
       - name: Upload testssl results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: testssl-results
@@ -109,7 +109,7 @@ jobs:
           ssh -p 55022 localdns2 sudo tar -C /var/log -c . > system-logs/localdns2.tar
 
       - name: Upload system logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: system-logs

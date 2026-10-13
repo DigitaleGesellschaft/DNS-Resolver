@@ -2,5 +2,7 @@
 - name: Setup DNS Backend
   tags: backend
   block:
-    - import_tasks: unbound.yml
-    - import_tasks: systemd-resolved.yml
+    - name: Setup unbound
+      ansible.builtin.import_tasks: unbound.yml
+    - name: Disable systemd-resolved
+      ansible.builtin.import_tasks: systemd-resolved.yml
