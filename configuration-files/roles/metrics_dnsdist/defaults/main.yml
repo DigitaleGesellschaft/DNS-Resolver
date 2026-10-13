@@ -1,0 +1,2 @@
+---
+metrics_dnsdist_instance_name: "{{ metrics_instance_name | default(inventory_hostname) }}"

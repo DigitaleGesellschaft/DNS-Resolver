@@ -1,0 +1,55 @@
+---
+- name: Metrics | Prometheus Server | Package present
+  ansible.builtin.package:
+    state: present
+    name:
+      - prometheus
+
+- name: Metrics | Prometheus Server | Systemd service drop-in directory present
+  ansible.builtin.file:
+    state: directory
+    path: "/etc/systemd/system/prometheus.service.d"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Metrics | Prometheus Server | Systemd credentials present
+  loop:
+    - key: prometheus-remote-write-password
+      value: "{{ metrics_remote_write_password }}"
+  when: metrics_remote_write_enabled
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "/etc/credstore/{{ item.key }}"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Metrics | Prometheus Server | Systemd service drop-in present
+  when: metrics_remote_write_enabled
+  notify:
+    - Metrics | Prometheus Server | Restart
+  ansible.builtin.copy:
+    src: etc/systemd/system/prometheus.service.d/remote-write-credentials.conf
+    dest: /etc/systemd/system/prometheus.service.d/remote-write-credentials.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Prometheus Server | Main config present
+  notify:
+    - Metrics | Prometheus Server | Reload
+  ansible.builtin.template:
+    src: etc/prometheus/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | Prometheus Server | Service enabled
+  ansible.builtin.systemd_service:
+    name: prometheus
+    state: started
+    daemon_reload: true
+    enabled: true

@@ -1,0 +1,12 @@
+---
+
+- name: Metrics | Prometheus Server | Restart
+  ansible.builtin.systemd_service:
+    name: prometheus
+    daemon_reload: true
+    state: restarted
+
+- name: Metrics | Prometheus Server | Reload
+  ansible.builtin.systemd_service:
+    name: prometheus
+    state: reloaded

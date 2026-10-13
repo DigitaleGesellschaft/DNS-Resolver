@@ -1,0 +1,35 @@
+---
+
+- name: Metrics | PowerDNS dnsdist | Systemd credentials present
+  loop:
+    - key: dnsdist-webserver-password
+      value: "{{ dnsdist_webserver_password }}"
+  notify:
+    - Metrics | Prometheus Server | Restart
+  no_log: true
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "/etc/credstore/{{ item.key }}"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Metrics | PowerDNS dnsdist | Prometheus service drop-in present
+  notify:
+    - Metrics | Prometheus Server | Restart
+  ansible.builtin.copy:
+    src: etc/systemd/system/prometheus.service.d/dnsdist-credentials.conf
+    dest: /etc/systemd/system/prometheus.service.d/dnsdist-credentials.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Metrics | PowerDNS dnsdist | Scrape config present
+  notify:
+    - Metrics | Prometheus Server | Reload
+  ansible.builtin.template:
+    src: etc/prometheus/scrape-configs.d/dnsdist.yml.j2
+    dest: /etc/prometheus/scrape-configs.d/dnsdist.yml
+    owner: root
+    group: root
+    mode: "0644"

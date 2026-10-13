@@ -1,0 +1,11 @@
+---
+- name: Setup PowerDNS dnsdist Metrics
+  tags: metrics
+  block:
+    - name: Setup Common Scrape Configs
+      ansible.builtin.import_role:
+        name: metrics
+        tasks_from: scrape-config-common.yml
+
+    - name: Setup PowerDNS dnsdist scrape config
+      ansible.builtin.import_tasks: scrape-config-dnsdist.yml
