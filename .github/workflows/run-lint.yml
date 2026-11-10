@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@9bce2bfb8f4a984e6b13767bc0d6bf0a49492164 # v26.10.1
+        uses: ansible/ansible-lint@b74fb6f73d234bf92672372cb1c10768e4018d16 # v26.11.0
         with:
           args: "--project-dir ."
           requirements_file: "requirements.yml"
