@@ -31,3 +31,6 @@ cert_path: "/etc/letsencrypt/"
 
 ip6_old_res1: 2a05:fc84:0:5::116 # remove this line after migration once old servers are shut down
 ip6_old_res2: 2a05:fc84:0:5::117 # remove this line after migration once old servers are shut down
+
+metrics_remote_write_enabled: true
+metrics_remote_write_url: "https://ops-ingest.digitale-gesellschaft.ch/api/v1/push"
