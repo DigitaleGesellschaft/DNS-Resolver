@@ -1,6 +1,6 @@
 # systemd resolved
 
-Eine Datei mit unter `/etc/systemd/resolved.conf.d/digitale-gesellschaft.conf` mit folgendem Inhalt erstellen:
+Eine Datei unter `/etc/systemd/resolved.conf.d/digitale-gesellschaft.conf` mit folgendem Inhalt erstellen:
 
 ```
 [Resolve]
